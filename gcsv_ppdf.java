@@ -313,7 +313,7 @@ public class gcsv_ppdf
         if (s.hasNext() && !s.hasNextDouble())
         {
             String str=s.next();
-            if (str.equals("0°"))
+            if (str.equals("0?"))
                 return Double.POSITIVE_INFINITY;
                 //if (str.contains("0.455700E+"))
             System.out.print("WOAH! "+str);
