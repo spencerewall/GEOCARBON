@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Arrays;
-/**
- * Average run 
+/** 
  * 
  * @author (Spencer Ewall) 
  */
@@ -13,7 +12,7 @@ public class MeanRun extends CalculatedRun
     private ArrayList<Double> stDev;
     
     /**
-     * 
+     * Constructs a new list of CO2 values over a time interval.  CO2 values are backed 
      */
     public MeanRun()
     {
@@ -75,11 +74,12 @@ public class MeanRun extends CalculatedRun
         }
     }
     /**
-     * Adds a run to be included in the calculation of CO2 for the average run.
+     * Adds a run to list of runs included in calculation of the average run.
      */
-    public void addRun(CO2Run run)
+    public boolean addRun(CO2Run run)
     {
-        runs.add(run);
+        boolean addbool = runs.add(run);
+        if (addbool == false) return addbool;
         
         if (sumCO2.isEmpty())
         {
@@ -88,16 +88,13 @@ public class MeanRun extends CalculatedRun
                 sumCO2.add(0.0);
             }
         }
-        System.out.print("a");
         //sumCO2.clear();
-        System.out.print("b");
-        System.out.print(run.size());
         for(int i=0; i<run.size(); i++)
         {
             sumCO2.add((run.getCO2(i)+ sumCO2.get(i) ));
         }
-        System.out.print("c");
-        /*forceNextCalculate();*/
+        forceNextCalculate();
+        return true;
     }
     public void addAllRuns(Collection<CO2Run> initialRuns)
     {
