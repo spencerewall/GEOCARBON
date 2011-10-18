@@ -17,7 +17,7 @@ public abstract class CO2Run
      * Overloaded constructor for the CO2Run class.  This constructor takes all CO2 values in the given list
      * and creates a new instance of CO2Run with these initial CO2 values.
      * 
-     * @param CO2Vals the values to be included in this instance of CO2Run
+     * @param CO2Vals a List containing the values to be included in this instance of CO2Run
      */
     public CO2Run(ArrayList<Double> CO2Vals)
     {
