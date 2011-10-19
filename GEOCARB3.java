@@ -12,7 +12,7 @@ public class GEOCARB3
      * doStuff performs the given number of runs.  Factor values are determined intrinsicaly.
      * @param numR the number of runs to perform.
      */
-    public static void doStuff()
+    public static void coStuff(String[] args)
     {
         String[] cols = {"Age(Ma)", "CO2 Predict..."};
         BellCurve ACTBell = new BellCurve(.08, .0336405595);
@@ -45,19 +45,19 @@ public class GEOCARB3
             for (int c=0; c<10000; c++)
             {
                  
-                System.out.print(c+"\t");
-                if (c%10==9)
-                    System.out.println();
-                ACT=act[c];
-                FERT=fert[c];
-                LIFE=life[c];
-                GYM=gym[c];
-                GLAC=glac[c];
+                //System.out.print(c+"\t");
+                //if (c%10==9)
+                //    System.out.println();
+                ACT=Math.abs(act[c]);
+                FERT=Math.abs(fert[c]);
+                LIFE=Math.abs(life[c]);
+                GYM=Math.abs(gym[c]);
+                GLAC=Math.abs(glac[c]);
                 if (ACT<0 || FERT<0 || LIFE<0 || GYM<0 ||GLAC<0)
-                    System.out.println("fail?");
+                    System.out.println(ACT+"\t"+LIFE+"\t"+GYM+"\t"+GLAC);
                 FactorValuedRun thisRun = new FactorValuedRun(deltaT, ACT, FERT, LIFE, GYM, GLAC);
                 thisRun.calculateCO2();
-                System.out.println(thisRun);
+                //System.out.println(thisRun);
                 //tests.add(thisRun);
             }// end do
             // sift through the runs to find acceptable data fits  (chiquare <= NDAT; bias < 0.3)
