@@ -2,12 +2,11 @@
 /**
  * Write a description of class ParkRoyerGCSVDrier here.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author (Spencer Ewall) 
  */
 public class GCSVDriverPR
 {
-    public static void main(String[] args)
+    public static void main1(String[] args)
     {
         int ndel=28;
         double deltaT=.28;

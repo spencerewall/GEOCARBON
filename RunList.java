@@ -23,6 +23,12 @@ public class RunList
      */
     public boolean add(CO2Run run)
     {
+        if (allRuns.isEmpty())
+        {
+            for (int i=0; i<run.size(); i++)
+                timebuckets.add(new ArrayList<PPMRunPair>());
+        }
+        
         boolean rAdd = allRuns.add(run);
         if (rAdd==false)
             return rAdd;
@@ -34,18 +40,11 @@ public class RunList
             return mAdd;
         }
         
-        //timebuckets.ensureCapacity(run.size());
-        //if (allRuns.isEmpty())
-        //{
-        //    for (int i=0; i<run.size(); i++)
-        //        timebuckets.add(new ArrayList<PPMRunPair>());
-        //}
-        
-        //for(int i=0; i<run.size(); i++)
-        //{
-        //    ArrayList<PPMRunPair> currentBucket = timebuckets.get(i);
-        //    currentBucket.add(new PPMRunPair(run.getCO2(i),run));
-        //}
+        for(int i=0; i<run.size(); i++)
+        {
+            ArrayList<PPMRunPair> currentBucket = timebuckets.get(i);
+            currentBucket.add(new PPMRunPair(run.getCO2(i),run));
+        }
         return true;
     }
     
@@ -73,7 +72,7 @@ public class RunList
         }
         return finalLst;
     }
-    public CO2Run getRun(int i)
+    public CO2Run get(int i)
     {
         CO2Run r = allRuns.get(i);
         return r;

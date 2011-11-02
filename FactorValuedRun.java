@@ -14,8 +14,8 @@ public class FactorValuedRun extends CalculatedRun
     private static boolean staticInit = false;
     
     // GCM is the DT for CO2-doubling, divided by ln 2, so when you mult by log(RCO2) you obtain deltaT when RCO2=2    
-    private double GCM0;
-    private double[] GEOG=new double[600];
+    private static double GCM0;
+    private static double[] GEOG=new double[600];
     private static double[] temp=new double[600];
     // fR is dimensionless effect of mountain uplift on CO2 uptake by silicate weathering
     private static double[] fR=new double[600];
@@ -107,6 +107,8 @@ public class FactorValuedRun extends CalculatedRun
         double[] factors = {deltaT, ACT, FERT, LIFE, GYM, GLAC};
         return Arrays.hashCode(factors);
     }
+    static double[] gcsppm = new double[800];
+    static double[] fAD = new double[600];
     /**
      * Calculates CO2 values for this FactorValuedRun object.  Values are generated based on the factors specified
      * in the construction of this instance of FactorValuedRun.
@@ -126,10 +128,13 @@ public class FactorValuedRun extends CalculatedRun
         double dlca= (dlct*CT-(dlgy*Gy  +dlcy*Cy  +dlga*Ga))/Ca;
         double Rcy=0.7095; double Rca=0.709;
         
-        double[] gcsppm = new double[800];
-        double[] fAD = new double[600];
+        Arrays.fill(gcsppm, 0);
+        Arrays.fill(fAD, 0);
         
-        CO2 = new ArrayList<Double>();
+        if (CO2==null)
+            CO2 = new ArrayList<Double>();
+        else
+            CO2.clear();
         
         //CO2.clear(); 
         // iberner is a counter for correspondence to earlier codes
@@ -423,8 +428,10 @@ public class FactorValuedRun extends CalculatedRun
             {
                 //RCO2old=RCO2*2.0;
                 //System.out.println("ifC");
+                int elseCount=0;
                 while(Math.abs(RCO2/RCO2old-1.0)>0.001)
                 {
+                    elseCount++;
                     RCO2old=RCO2;
                     double Fbbs=(Math.pow(2,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
                         *Math.pow((1+RCO2),(-FERT))
@@ -450,6 +457,7 @@ public class FactorValuedRun extends CalculatedRun
                         // convert the iteration to geometric shrinkage 
                         // to avoid nonpositive value in overshoot
                 }
+                //System.out.println(elseCount);
             }
             // the CO2 ppm is converted from RCO2 by last My average value = 250 ppm
             double tau=15 + 6*Math.log(RCO2)-12.8*fac+GEOG[i-1];
@@ -473,17 +481,22 @@ public class FactorValuedRun extends CalculatedRun
             gcsppm[i-1]=ppm;
         }
     }
+    // Bas calculated oceanic Sr-isotope ratio for basalt-seawater reactions - Bas(571)=0.709
+    static double[] Bas = new double[600];
+    static double[] DELTOT = new double[600];
+    static double[] DELRIV = new double[600];
+    static double[] DELBAS = new double[600];
+    // R is the actual measured Sr-isotope ratio
+    static double[] R = new double[600];
+    static double[] SRBAS = new double[600];
     private static void initializeStaticRunVars()
     {
-        double[] Bas=new double[600],   // Bas calculated oceanic Sr-isotope ratio for basalt-seawater reactions - Bas(571)=0.709
-        DELTOT=new double[600],DELRIV=new double[600],
-        DELBAS=new double[600],
-        R=new double[600],              // R is the actual measured Sr-isotope ratio
-        SRBAS=new double[600];
+        Arrays.fill(Bas, 0);
+        double FBAS;
         for (int it=570; it>=0; it--)
         {
             // test case would be fSR(T)=1
-            double FBAS=FBASO*fSr[it];
+            FBAS=FBASO*fSr[it];
             if (it<570) 
                 Bas[it]=Bas[it+1]+DELTOT[it+1];
             else if (it==570) 

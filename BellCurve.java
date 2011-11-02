@@ -1,7 +1,11 @@
 import java.util.Random;
 
 /**
- * This class imitates a bell curve
+ * This class imitates a bell curve.
+ * 
+ * Possible alternative names:
+ * GaussianFactor
+ * 
  */
 public class BellCurve
 {
@@ -21,7 +25,7 @@ public class BellCurve
     /**
      * Constructs a BellCurve Object over a finite data set with a given high and low value.
      */
-    public BellCurve(double low, double high, boolean range)
+    public BellCurve(double low, double high, boolean wat)
     {
         mean = (low+high)/2;
         stDev = (high-low)/2;
@@ -41,18 +45,49 @@ public class BellCurve
     {
         return stDev;
     }
-    public double getRandomValue()
+    /**
+     * Returns a positively limited pseudorandom <code>double</code> from this Gaussian distribution.  
+     * This method will only generate values between 0 and 2xMean (inclusive).  The upper end is limited
+     * by 2xMean so that values will still be evenly distributed.
+     */
+    public double getPositiveRandom()
+    {
+        double val=-1;
+        while ((val<0) || (val>getMean()*2))
+        {
+            val = getRandom();
+        }
+        return val;
+    }
+    /**
+     * Returns a pseudorandom <code>double</code> from this Gaussian distribution.
+     */
+    public double getRandom()
     {
         double gauss = r.nextGaussian();
-        //return ((gauss*stDev)+mean)+"\t"+gauss;
         return ((gauss*stDev)+mean);
     }
+    /**
+     * Returns an array of pseudorandom <code>doubles</code> as defined by getRandom()
+     * 
+     * @param len 
+     * @return an array of pseudorandom doubles from this gaussian distribution
+     */
     public double[] getRandomArray(int len)
     {
         double[] arr = new double[len];
         for (int i = 0; i< arr.length; i++)
         {
-            arr[i]=getRandomValue();
+            arr[i]=getRandom();
+        }
+        return arr;
+    }
+    public double[] getPositiveRandomArray(int len)
+    {
+        double[] arr = new double[len];
+        for (int i = 0; i< arr.length; i++)
+        {
+            arr[i]=getPositiveRandom();
         }
         return arr;
     }
