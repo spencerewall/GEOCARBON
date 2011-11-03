@@ -15,15 +15,15 @@ public class GEOCARB3
     public static void main(String[] args)
     {
         String[] cols = {"Age(Ma)", "CO2 Predict..."};
-        BellCurve ACTBell = new BellCurve(.03,.13,true);
-        BellCurve FERTBell = new BellCurve(.2,.8,true);
-        BellCurve LIFEBell = new BellCurve(.125,.5,true);
-        BellCurve GYMBell = new BellCurve(.5,1.2,true);
+        GaussianFactor ACTBell = new GaussianFactor(.03,.13,true);
+        GaussianFactor FERTBell = new GaussianFactor(.2,.8,true);
+        GaussianFactor LIFEBell = new GaussianFactor(.125,.5,true);
+        GaussianFactor GYMBell = new GaussianFactor(.5,1.2,true);
         
-        double[] act = ACTBell.getPositiveRandomArray(10000);
-        double[] fert = FERTBell.getPositiveRandomArray(10000);
-        double[] life = LIFEBell.getPositiveRandomArray(10000);
-        double[] gym = GYMBell.getPositiveRandomArray(10000);
+        double[] act = ACTBell.getPositiveValueList(10000);
+        double[] fert = FERTBell.getPositiveValueList(10000);
+        double[] life = LIFEBell.getPositiveValueList(10000);
+        double[] gym = GYMBell.getPositiveValueList(10000);
         double[] glac = new double[10000];
         Arrays.fill(glac, 1.0);
         
@@ -40,12 +40,7 @@ public class GEOCARB3
             System.out.println("ACT\tFERT\tLIFE\tGYM\tGLAC\tWhoah");
             for (int c=0; c<10000; c++)
             {
-                //System.out.print("a");
-                //System.out.print("b");
                 FactorValuedRun thisRun = new FactorValuedRun(deltaT, act[c], fert[c], life[c], gym[c], glac[c]);
-                //System.out.print("c");
-                //System.out.print("d");
-                
                 tests[c+10000*iiit]=thisRun;
                 //System.out.print("e");
                 //System.out.println();
