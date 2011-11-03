@@ -5,11 +5,11 @@ import java.util.Arrays;
  * 
  * @author (Spencer Ewall) 
  */
-public class MeanRun extends CalculatedRun
+public class MeanRun extends CO2Run
 {
-    private ArrayList <CO2Run> runs;
-    private ArrayList<Double> sumCO2;
-    private ArrayList<Double> stDev;
+    private ArrayList<CO2Run> runs;
+    private double[] sum;
+    //private double[] stDev;
     
     /**
      * Constructs a new list of CO2 values over a time interval.  CO2 values are backed 
@@ -18,42 +18,66 @@ public class MeanRun extends CalculatedRun
     {
         super();
         runs = new ArrayList<CO2Run>();
-        stDev = new ArrayList<Double>();
-        sumCO2 = new ArrayList<Double>();
+        sum=new double[0];
+        //stDev=new double[0];
     }
-    /**
-     * 
-     */
-    public MeanRun(Collection<CO2Run> initialRuns)
+    public MeanRun(int numRuns)
     {
         super();
-        stDev = new ArrayList<Double>();
-        sumCO2 = new ArrayList<Double>();
-        runs = new ArrayList<CO2Run>();
-        this.addAllRuns(initialRuns);
+        runs = new ArrayList<CO2Run>(numRuns);
+        sum=new double[0];
+        //stDev=new double[0];
     }
     /**
      * Calculates an average run with CO2 values cooresponding to the average at each timestep
      * of all CO2 runs added up to this point.
      */
-    protected void doCO2Calc()
+    /**
+     * Adds a run to list of runs included in calculation of the average run.
+     */
+    public boolean addRun(CO2Run run)
     {
-        //if sumCO2 = null then
-        if (CO2.isEmpty())
+        boolean addbool = runs.add(run);
+        if (addbool == false)
+            return false;
+        if (runs.size()==1)   //first time a run is being added
         {
-            CO2.clear();
-            for(int i=0; i<sumCO2.size(); i++)
-            {
-                CO2.add(sumCO2.get(i)/runs.size());
-            }
-            return;
+            sum=new double[run.size()];
+            //stDev=new double[run.size()];
+            Arrays.fill(sum, 0);
+            //Arrays.fill(stDev, 0);
         }
-        for(int i=0; i<sumCO2.size(); i++)
-            CO2.set(i,sumCO2.get(i)/runs.size());
-        
-        
+        for (int i=0; i<run.size(); i++)
+        {
+            sum[i]=sum[i]+run.getCO2(i);
+        }
+        //recalculateMean();
+        //recalculateStDev();
+        return true;
     }
-    private void doStandardDevCalc()
+    public void recalculateMean()
+    {
+        CO2.clear();
+        for (int i=0; i<sum.length; i++)
+        {
+            CO2.add(sum[i]/runs.size());
+        }
+    }
+    public double getCO2(int i)
+    {
+        recalculateMean();
+        //recalculateStDev();
+        return super.getCO2(i);
+    }
+    public ArrayList<Double> getAllCO2()
+    {
+        recalculateMean();
+        //recalculateStDev();
+        return super.getAllCO2();
+    }
+    
+    /*
+    public void recalculateStDev()
     {
         //if (CO2==null){ } throw error
         //if (CO2==null){ } throw error
@@ -73,51 +97,16 @@ public class MeanRun extends CalculatedRun
             stDev.set(t,Math.sqrt(stDev.get(t)/runs.size()));
         }
     }
-    /**
-     * Adds a run to list of runs included in calculation of the average run.
-     */
-    public boolean addRun(CO2Run run)
-    {
-        boolean addbool = runs.add(run);
-        if (addbool == false) return addbool;
-        
-        if (sumCO2.isEmpty())
-        {
-            for (int i=0; i<run.size(); i++)
-            {
-                sumCO2.add(0.0);
-            }
-        }
-        //sumCO2.clear();
-        for(int i=0; i<run.size(); i++)
-        {
-            sumCO2.add((run.getCO2(i)+ sumCO2.get(i) ));
-        }
-        forceNextCalculate();
-        return true;
-    }
+    */
+    /*
     public void addAllRuns(Collection<CO2Run> initialRuns)
-    {
-        for (CO2Run i: initialRuns)
-            this.addRun(i);
-    }
     public void removeRun(CO2Run run)
-    {
-        runs.add(run);
-        for(int i=0; i<run.size(); i++)
-            sumCO2.set(i,sumCO2.get(i)+run.getCO2(i));
-        forceNextCalculate();
-    }
     public ArrayList<Double> getAllStandardDev()
-    {
-        doStandardDevCalc();
-        return stDev;
-    }
     public Double getStandardDev(int i)
-    {
-        doStandardDevCalc();
-        return stDev.get(i);
-    }
+    */
+
+   
+   
     /**
      * Returns a hash code for this <code>MeanRun</code> object.  The hashcode returned is the same as the
      * hashcode of the ArrayList<Double> object given by getAllCO2().

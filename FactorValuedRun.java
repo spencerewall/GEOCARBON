@@ -3,14 +3,8 @@ import java.util.Arrays;
 /**
  * This class will run a simulation for a specific set of values for act, fert, life, gym, and glac.
  */
-public class FactorValuedRun extends CalculatedRun
+public class FactorValuedRun extends CO2Run
 {
-    private double deltaT;
-    private double ACT;
-    private double FERT;
-    private double LIFE;
-    private double GYM;
-    private double GLAC;
     private static boolean staticInit = false;
     
     // GCM is the DT for CO2-doubling, divided by ln 2, so when you mult by log(RCO2) you obtain deltaT when RCO2=2    
@@ -50,7 +44,13 @@ public class FactorValuedRun extends CalculatedRun
     private static double Fmc1=6.67;    // Fmc: C-degassing from volcanism, metamorphism and diagenesis of carbonate
     private static double Fmp1=0.25;
     private static double Fms1=0.5;
-
+    
+    private double deltaT;
+    private double ACT;
+    private double FERT;
+    private double LIFE;
+    private double GYM;
+    private double GLAC;
     
     public FactorValuedRun(double deltat, double act, double fert, double life, double gym, double glac)
     {
@@ -66,9 +66,9 @@ public class FactorValuedRun extends CalculatedRun
         if (!staticInit)
         {
             initializeStaticRunVars();
+            staticInit=true;
         }
-        staticInit=true;
-        forceNextCalculate();
+        CO2 = doCO2Calc(deltat, act, fert, life, gym, glac);
     }
     public double getDeltaT(){ return deltaT; }
     public double getACT() { return ACT; }
@@ -78,7 +78,7 @@ public class FactorValuedRun extends CalculatedRun
     public double getGLAC() { return GLAC; }
     public String toString()
     {
-        return CO2.toString();
+        return getAllCO2().toString();
     }
     /**
      * 
@@ -109,39 +109,38 @@ public class FactorValuedRun extends CalculatedRun
     }
     static double[] gcsppm = new double[800];
     static double[] fAD = new double[600];
+    static double oxy, RCO2, Spy, Spa, Ssy, Ssa, Gy, Ga, Cy, Ca, dlsy, dlcy, dlpy, dlpa, dlsa, dlgy, dlga, dlca, Rcy, Rca;
+    static ArrayList<Double> CO2Temp;
     /**
      * Calculates CO2 values for this FactorValuedRun object.  Values are generated based on the factors specified
      * in the construction of this instance of FactorValuedRun.
      */
-    protected void doCO2Calc()
+    
+    private static ArrayList<Double> doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC)
     {
         //The following variables need to be reset each time a run is performed
-        double oxy=25.0;    //oxy is oxygen level in atmosphere, in percent mass (Berner 2009)
+        oxy=25.0;    //oxy is oxygen level in atmosphere, in percent mass (Berner 2009)
         // RCO2 is ratio of CO2 to pre-industrial level.  initial RCO2 level in 
         // the calculation is moot, because it will be solved for
-        double RCO2=10.0;
-        double Spy=20.0; double Spa=280.0; double Ssy=150.0; double Ssa=150.0;
-        double Gy=250.0; double Ga=1000.0; double Cy=1000.0; double Ca=4000.0;
-        double dlsy=35.0; double dlcy=3.0; double dlpy=-10.0; double dlpa=-10.0;
-        double dlsa= (dlst*St-(dlpy*Spy+dlsy*Ssy+dlpa*Spa))/Ssa;
-        double dlgy= -23.5; double dlga=-23.5;
-        double dlca= (dlct*CT-(dlgy*Gy  +dlcy*Cy  +dlga*Ga))/Ca;
-        double Rcy=0.7095; double Rca=0.709;
+        RCO2=10.0;
+        Spy=20.0; Spa=280.0; Ssy=150.0; Ssa=150.0;
+        Gy=250.0; Ga=1000.0; Cy=1000.0; Ca=4000.0;
+        dlsy=35.0; dlcy=3.0; dlpy=-10.0; dlpa=-10.0;
+        dlsa= (dlst*St-(dlpy*Spy+dlsy*Ssy+dlpa*Spa))/Ssa;
+        dlgy= -23.5; dlga=-23.5;
+        dlca= (dlct*CT-(dlgy*Gy  +dlcy*Cy  +dlga*Ga))/Ca;
+        Rcy=0.7095; Rca=0.709;
         
         Arrays.fill(gcsppm, 0);
         Arrays.fill(fAD, 0);
         
-        if (CO2==null)
-            CO2 = new ArrayList<Double>();
-        else
-            CO2.clear();
+        CO2Temp = new ArrayList<Double>(60);
         
         //CO2.clear(); 
         // iberner is a counter for correspondence to earlier codes
         // I decimate by 10 to match the 10My-averaged CO2 values
-        for (int iberner=571; iberner>=1; iberner--)
+        for (int i=571; i>=1; i--)
         {
-            int i=iberner;
             double GCM=GCM0;
 
             // Bob's GEOCARB GLACIAL INTERVALS
@@ -476,10 +475,12 @@ public class FactorValuedRun extends CalculatedRun
                 int k=1+i/10;
                 
                 // save CO2 level (ppm) or oxygen (mass percent)
-                CO2.add(0,ppm);
+                CO2Temp.add(0,new Double(ppm));
             }
             gcsppm[i-1]=ppm;
         }
+        CO2Temp.trimToSize();
+        return CO2Temp;
     }
     // Bas calculated oceanic Sr-isotope ratio for basalt-seawater reactions - Bas(571)=0.709
     static double[] Bas = new double[600];

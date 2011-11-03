@@ -31,52 +31,53 @@ public class GEOCARB3
         
         int ndel=28;
         double deltaT=.28;
-        double GYM=0, LIFE=0, ACT=0, FERT=0, GLAC=0;
         
         //RunList tests = new RunList();
-        ArrayList<CO2Run> tests = new ArrayList<CO2Run>(10000);
+        CO2Run[] tests = new CO2Run[270000];
+        MeanRun m = new MeanRun(270000);
         for (int iiit=0; iiit<ndel; iiit++)
         {
             deltaT = deltaT+0.12*(1.0+4.0*((float) (iiit))/((float) (ndel-1)));
-            
-            System.out.println("ACT\tFERT\tLIFE\tGYM\tGLAC");
+            System.out.println("ACT\tFERT\tLIFE\tGYM\tGLAC\tWhoah");
             for (int c=0; c<10000; c++)
             {
-                ACT=Math.abs(act[c]);
-                FERT=Math.abs(fert[c]);
-                LIFE=Math.abs(life[c]);
-                GYM=Math.abs(gym[c]);
-                GLAC=Math.abs(glac[c]);
-                if (ACT<0 || FERT<0 || LIFE<0 || GYM<0 ||GLAC<0)
-                    System.out.println(ACT+"\t"+FERT+"\t"+LIFE+"\t"+GYM+"\t"+GLAC);
-                FactorValuedRun thisRun = new FactorValuedRun(deltaT, ACT, FERT, LIFE, GYM, GLAC);
-                thisRun.calculateCO2();
+                //System.out.print("a");
+                //System.out.print("b");
+                FactorValuedRun thisRun = new FactorValuedRun(deltaT, act[c], fert[c], life[c], gym[c], glac[c]);
+                //System.out.print("c");
+                //System.out.print("d");
                 
-                //System.out.println(c);
-                tests.add(thisRun);
+                tests[c+10000*iiit]=thisRun;
+                //System.out.print("e");
+                //System.out.println();
             }
             // sift through the runs to find acceptable data fits  (chiquare <= NDAT; bias < 0.3)
             // write to disk
-            System.out.println("done"+iiit);
+            System.out.println("done"+iiit+"\tTime = "+System.currentTimeMillis());
         } 
         System.out.println("Done calculating.  Begin write.");
-        MeanRun m = new MeanRun();
-        for (int i=0; i<tests.size(); i++)
+        
+        for (int i=0; i<tests.length; i++)
         {
-            m.addRun(tests.get(i));
+            m.addRun(tests[i]);
         }
+        
+        ArrayList<Double> arr = m.getAllCO2();
+        for (Double d: arr)
+            System.out.print(d);
+        /*
         try
         {
             java.io.PrintWriter output = new java.io.PrintWriter(new java.io.FileWriter("output.dat"));
-            output.println("age/tmean/thigh/tlow");
+            output.println("age\tmean\thigh\tlow");
             //MeanRun m = tests.getMean();
-            int highIndex=(int) (tests.size()*.975);
-            int lowIndex=(int)(tests.size()*.025);
+            int highIndex=(int) (tests.length*.975);
+            int lowIndex=(int)(tests.length*.025);
             CO2Run highRun, lowRun;
             for(int i = 0; i<m.size(); i++)
             {
-                highRun = tests.get(highIndex);
-                lowRun = tests.get(lowIndex);
+                highRun = tests[highIndex];
+                lowRun = tests[lowIndex];
                 output.println(m.getCO2(i)+"/t"+highRun.getCO2(i)+"/t"+lowRun.getCO2(i));
                 System.out.println(i*5+"/t"+m.getCO2(i)+"/t"+highRun.getCO2(i)+"/t"+lowRun.getCO2(i));
             }
@@ -86,6 +87,6 @@ public class GEOCARB3
         {
             System.out.println(e.getMessage());
             System.exit(0);
-        }
+        }*/
     }
 }
