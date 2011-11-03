@@ -14,7 +14,7 @@ public class GCSVDriverPR
         
         
         CO2Run[] tests = new CO2Run[270000];
-        MeanRun m = new MeanRun(270000);
+        MeanRun m = new MeanRun();
         int count = 0;
         for (int iiit=0; iiit<ndel; iiit++)
         {

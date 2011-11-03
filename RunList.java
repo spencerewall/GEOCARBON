@@ -33,7 +33,7 @@ public class RunList
         if (rAdd==false)
             return rAdd;
         
-        boolean mAdd = mean.addRun(run);
+        boolean mAdd = mean.include(run);
         if (mAdd==false)
         {
             allRuns.remove(run);
