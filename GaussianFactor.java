@@ -7,7 +7,7 @@ import java.util.Random;
  * GaussianFactor
  * 
  */
-public class BellCurve
+public class GaussianFactor implements FactorGenerator
 {
     private double mean; //mu
     private double stDev; // theta
@@ -16,7 +16,7 @@ public class BellCurve
     /**
      * Constructs a BellCurve Object centered around the given average with a given standardDeviation.
      */
-    public BellCurve(double average,  double standardDeviation)
+    public GaussianFactor(double average,  double standardDeviation)
     {
         mean = average;
         stDev = standardDeviation;
@@ -25,7 +25,7 @@ public class BellCurve
     /**
      * Constructs a BellCurve Object over a finite data set with a given high and low value.
      */
-    public BellCurve(double low, double high, boolean wat)
+    public GaussianFactor(double low, double high, boolean wat)
     {
         mean = (low+high)/2;
         stDev = (high-low)/2;
@@ -50,19 +50,19 @@ public class BellCurve
      * This method will only generate values between 0 and 2xMean (inclusive).  The upper end is limited
      * by 2xMean so that values will still be evenly distributed.
      */
-    public double getPositiveRandom()
+    public double getNextPositive()
     {
         double val=-1;
         while ((val<0) || (val>getMean()*2))
         {
-            val = getRandom();
+            val = getNextValue();
         }
         return val;
     }
     /**
      * Returns a pseudorandom <code>double</code> from this Gaussian distribution.
      */
-    public double getRandom()
+    public double getNextValue()
     {
         double gauss = r.nextGaussian();
         return ((gauss*stDev)+mean);
@@ -73,21 +73,21 @@ public class BellCurve
      * @param len 
      * @return an array of pseudorandom doubles from this gaussian distribution
      */
-    public double[] getRandomArray(int len)
+    public double[] getValueList(int len)
     {
         double[] arr = new double[len];
         for (int i = 0; i< arr.length; i++)
         {
-            arr[i]=getRandom();
+            arr[i]=getNextValue();
         }
         return arr;
     }
-    public double[] getPositiveRandomArray(int len)
+    public double[] getPositiveValueList(int len)
     {
         double[] arr = new double[len];
         for (int i = 0; i< arr.length; i++)
         {
-            arr[i]=getPositiveRandom();
+            arr[i]=getNextPositive();
         }
         return arr;
     }
