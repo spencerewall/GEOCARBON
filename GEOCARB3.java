@@ -33,7 +33,7 @@ public class GEOCARB3
         double deltaT=.28;
         
         CO2Run[] tests = new CO2Run[270000];
-        MeanRun m = new MeanRun();
+        
         for (int iiit=0; iiit<ndel; iiit++)
         {
             deltaT = deltaT+0.12*(1.0+4.0*((float) (iiit))/((float) (ndel-1)));
@@ -51,6 +51,7 @@ public class GEOCARB3
         } 
         System.out.println("Done calculating.  Begin write.");
         
+        /*MeanRun m = new MeanRun();
         for (int i=0; i<tests.length; i++)
         {
             m.include(tests[i]);
