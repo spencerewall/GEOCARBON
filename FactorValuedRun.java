@@ -55,7 +55,6 @@ public class FactorValuedRun implements CO2Run
     
     public FactorValuedRun(double deltat, double act, double fert, double life, double gym, double glac)
     {
-        super();
         deltaT = deltat;
         ACT = act;
         FERT = fert;
@@ -120,11 +119,21 @@ public class FactorValuedRun implements CO2Run
     private static double[] gcsppm = new double[800];
     private static double[] fAD = new double[600];
     private static double oxy, RCO2, Spy, Spa, Ssy, Ssa, Gy, Ga, Cy, Ca, dlsy, dlcy, dlpy, dlpa, dlsa, dlgy, dlga, dlca, Rcy, Rca;
+    private static double GCM, fac, RT, GAS, Fc, fE, fBB;
+    private static double Fwpy, Fwsy, Fwgy, Fwcy, Fwpa, Fwsa, Fwga, Fwca;
+    private static double Fmp, Fms, Fmg, Fmc, Fyop, Fyos, Fyog, Fyoc, zzn, aaJ, alphas;
+    private static double Fbp, Fbg, Fbs, Fbc;
+    private static double Roc, anv, Rg, Rv, avnv;
+    private static double Fob0, Xvolc0, Fwsi0, Avlc, Bvlc, Dvlc, Evlc, Xvolc, fvolc, fB;
+    private static double RCO2old;
+    private static double Fbbs, fPBS, W, V;
+    private static double oldfBBS, oldW, oldV, oldfPBS, oldX, ewfBBS, ewW, ewV, ewX, ewfPBS, fBBS;
+    private static double X;
+    private static double tau, ppm;
     /**
      * Calculates CO2 values for this FactorValuedRun object.  Values are generated based on the factors specified
      * in the construction of this instance of FactorValuedRun.
      */
-    
     private static double[] doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC)
     {
         //The following variables need to be reset each time a run is performed
@@ -150,7 +159,7 @@ public class FactorValuedRun implements CO2Run
         // I decimate by 10 to match the 10My-averaged CO2 values
         for (int i=571; i>=1; i--)
         {
-            double GCM=GCM0;
+            GCM=GCM0;
 
             // Bob's GEOCARB GLACIAL INTERVALS
             if ((i<=340) && (i>=260))
@@ -158,12 +167,11 @@ public class FactorValuedRun implements CO2Run
             if ((i<=40) && (i>=0))
                 GCM=GCM0*GLAC;
             
-            double fac=(i-1)/570.0;
+            fac=(i-1)/570.0;
 
             // RT is Y in Berner (2004), & RUN in Berner and Kothavala (2001)
             // is the coefficient of continental runoff versus temperature change
             // that is, runoff/runoff0 = 1 + RT*(T-T0), gotten from GCM runs
-            double RT;
             if(i>341)
                 RT=0.025;
             else if((i<=341)&&(i>261)) 
@@ -172,15 +180,13 @@ public class FactorValuedRun implements CO2Run
                 RT=0.025;
             else
                 RT=0.045;
-            double GAS=0.75;
-            double Fc;
+            GAS=0.75;
             if(i>151)
                 Fc=GAS;
             else
                 Fc=(GAS)+((1.0-GAS)/150.)*(151-i);
                 // fE is the factor of plant-assisted silicate weathering, 
                 // relative to modern angiosperms
-            double fE;
             if(i>381)
                 fE=LIFE;
             else if((i<=381)&&(i>351))
@@ -207,7 +213,6 @@ public class FactorValuedRun implements CO2Run
 
             // Berner's GEOCARB modelling assumes a long-term balance of carbon fluxes, 
             // in two terms, fBB and fB
-            double fBB;
             if(i==571)
                 fBB=1;
             else if((i<=570)&&(i>381))
@@ -221,38 +226,38 @@ public class FactorValuedRun implements CO2Run
             else
                 fBB=(1.0+0.087*GCM*Math.log(RCO2)-0.087*Ws*fac
                     +0.087*GEOG[i-1])*Math.pow(2.0*RCO2/(1.0+RCO2),FERT);
-                    
-            double Fwpy=fA[i-1]*fR[i-1]*kwpy*Spy;
-            double Fwsy=fA[i-1]*fD[i-1]*kwsy*Ssy;
-            double Fwgy=fA[i-1]*fR[i-1]*kwgy*Gy;
-            double Fwcy=fA[i-1]*fD[i-1]*fL[i-1]*fE*fBB*kwcy*Cy;
-            double Fwpa=fR[i-1]*Fwpa1;
-            double Fwsa=fA[i-1]*fD[i-1]*Fwsa1;
-            double Fwga=fR[i-1]*Fwga1;
-            double Fwca=fA[i-1]*fD[i-1]*fL[i-1]*fE*fBB*Fwca1;
+               
+            Fwpy=fA[i-1]*fR[i-1]*kwpy*Spy;
+            Fwsy=fA[i-1]*fD[i-1]*kwsy*Ssy;
+            Fwgy=fA[i-1]*fR[i-1]*kwgy*Gy;
+            Fwcy=fA[i-1]*fD[i-1]*fL[i-1]*fE*fBB*kwcy*Cy;
+            Fwpa=fR[i-1]*Fwpa1;
+            Fwsa=fA[i-1]*fD[i-1]*Fwsa1;
+            Fwga=fR[i-1]*Fwga1;
+            Fwca=fA[i-1]*fD[i-1]*fL[i-1]*fE*fBB*Fwca1;
             
             /**woaaaaah wrong!!!*/
-            double Fmp=fSr[i-1]*Fmp1;
-            double Fms=fSr[i-1]*Fms1;
-            double Fmg=fSr[i-1]*Fmg1;
-            double Fmc=fSr[i-1]*Fc*Fmc1;
-            double Fyop=Fwpa+Fmp;
-            double Fyos=Fwsa+Fms;
-            double Fyog=Fwga+Fmg;
-            double Fyoc=Fwca+Fmc;
-            double zzn=1.5;
-            double aaJ=4.0;
-            double alphas =35.0*Math.pow(oxy/38.0,zzn);
+            Fmp=fSr[i-1]*Fmp1;
+            Fms=fSr[i-1]*Fms1;
+            Fmg=fSr[i-1]*Fmg1;
+            Fmc=fSr[i-1]*Fc*Fmc1;
+            Fyop=Fwpa+Fmp;
+            Fyos=Fwsa+Fms;
+            Fyog=Fwga+Fmg;
+            Fyoc=Fwca+Fmc;
+            zzn=1.5;
+            aaJ=4.0;
+            alphas =35.0*Math.pow(oxy/38.0,zzn);
             
             alphac[i-1]=27.0+aaJ*(oxy/38.0-1.0);
-            double Fbp = (1/alphas)*((DLSOC[i-1]-dlsy)*Fwsy+(DLSOC[i-1]-dlsa)*Fwsa+(DLSOC[i-1]-dlpy)*Fwpy+(DLSOC[i-1]-dlpa)*Fwpa +(DLSOC[i-1]-dlsa)*Fms +(DLSOC[i-1]-dlpa)*Fmp);
+            Fbp = (1/alphas)*((DLSOC[i-1]-dlsy)*Fwsy+(DLSOC[i-1]-dlsa)*Fwsa+(DLSOC[i-1]-dlpy)*Fwpy+(DLSOC[i-1]-dlpa)*Fwpa +(DLSOC[i-1]-dlsa)*Fms +(DLSOC[i-1]-dlpa)*Fmp);
             
                 //Fbg is burial Cflux of organic sediments  
-            double Fbg=(1/alphac[i-1])*((DLCOC[i-1]-dlcy)*Fwcy+(DLCOC[i-1]-dlca)*Fwca+(DLCOC[i-1]-dlgy)*Fwgy+(DLCOC[i-1]-dlga)*Fwga +(DLCOC[i-1]-dlca)*Fmc+(DLCOC[i-1]-dlga)*Fmg);
+            Fbg=(1/alphac[i-1])*((DLCOC[i-1]-dlcy)*Fwcy+(DLCOC[i-1]-dlca)*Fwca+(DLCOC[i-1]-dlgy)*Fwgy+(DLCOC[i-1]-dlga)*Fwga +(DLCOC[i-1]-dlca)*Fmc+(DLCOC[i-1]-dlga)*Fmg);
             
-            double Fbs=Fwpy+Fwpa+Fwsy+Fwsa+Fms +Fmp-Fbp;
+            Fbs=Fwpy+Fwpa+Fwsy+Fwsa+Fms +Fmp-Fbp;
             //Fbc is burial Cflux of carbonate sediments    
-            double Fbc=Fwgy+Fwga+Fwcy+Fwca+Fmc +Fmg-Fbg;
+            Fbc=Fwgy+Fwga+Fwcy+Fwca+Fmc +Fmg-Fbg;
             
             /**
              * 
@@ -284,22 +289,22 @@ public class FactorValuedRun implements CO2Run
              * fAD is total runoff factor for silicate weathering
              * obtained with GCM simulations and continental reconstructions
              */
-            double Roc = (Sr[i-1]/10000.0)+0.7;
+            Roc = (Sr[i-1]/10000.0)+0.7;
             // vary anv from 0 to 0.015, is Berner parameter NV 
             // anv is a parameter that scales the influence of volcanic 
             //     weathering on Sr-87/86 ratios.
             // anv=0 means no accelerated weathering of volcanic rocks, 
             //     as opposed to plutonic/metamorphic
-            double anv=0.015;
-            double Rg =0.722-anv*(1-fRT[i-1]/1.063);
-            double Rv =0.704;
+            anv=0.015;
+            Rg =0.722-anv*(1-fRT[i-1]/1.063);
+            Rv =0.704;
             // avnv is the ratio of volcanic weathering CO2-consumption rate (basalts) 
             // to plutonic weathering CO2-consumption rate (granites)
             // avnv=4 in the version of code used for 2010 GoldSchmidt conference poster.
             // obtained by averaging values from Taylor's dissertation (5) and Taylor et al 1999 (3)
             // avnv=5 is Berner's preferred value for GEOCARBSULF,
             // gotten from Aaron Taylor's dissertation
-            double avnv=4.0;
+            avnv=4.0;
             // Fv0 =.3 of total Fwsi0=6.67 at x=0; Fob0 is basalt-seawater 
             /**
             * flux =1/3 of total ocean imbalance  with Fv0 = 2/3
@@ -319,31 +324,29 @@ public class FactorValuedRun implements CO2Run
             * dramatically different (largest differences were for unlikely parameter choices where the 
             * datafit was already poor.), I retain Newton-Raphson for the export codes.
             */
-            double Fob0=4.0;
+            Fob0=4.0;
             // Fob0=FOBO  --- this was an option to sample a range of values in the K2 loop
-            double Xvolc0=0.35;
-            double Fwsi0 =6.67;
+            Xvolc0=0.35;
+            Fwsi0 =6.67;
             Rcy = Rcy +((Roc-Rcy)*Fbc/Cy)*Dt;
             Rca = Rca +((Rcy-Rca)*Fyoc/Ca)*Dt;
-            double Avlc =((Rv-Roc)*fSr[i-1]*Fob0)/(Fbc-Fwcy-Fwca);
-            double Bvlc = Fwcy/(Fbc-Fwcy-Fwca);
-            double Dvlc = Fwca/(Fbc-Fwcy-Fwca);
-            double Evlc = Fbc/(Fbc-Fwcy-Fwca);
-            double Xvolc= (Avlc +Bvlc*Rcy+Dvlc*Rca -Evlc*Roc+Rg)/(Rg-Rv);
+            Avlc =((Rv-Roc)*fSr[i-1]*Fob0)/(Fbc-Fwcy-Fwca);
+            Bvlc = Fwcy/(Fbc-Fwcy-Fwca);
+            Dvlc = Fwca/(Fbc-Fwcy-Fwca);
+            Evlc = Fbc/(Fbc-Fwcy-Fwca);
+            Xvolc= (Avlc +Bvlc*Rcy+Dvlc*Rca -Evlc*Roc+Rg)/(Rg-Rv);
             fAD[i-1]=fA[i-1]*fD[i-1];
-            double fvolc=(avnv*Xvolc+1.0-Xvolc)/(avnv*Xvolc0+1.0-Xvolc0);
-            double fB=(Fbc-Fwcy-Fwca)/(Math.pow(fAD[i-1],0.65)*fE*fR[i-1]*fvolc*Fwsi0);
+            fvolc=(avnv*Xvolc+1.0-Xvolc)/(avnv*Xvolc0+1.0-Xvolc0);
+            fB=(Fbc-Fwcy-Fwca)/(Math.pow(fAD[i-1],0.65)*fE*fR[i-1]*fvolc*Fwsi0);
             // ENDING HERE IS NEW CODE FOR geocarbsulf volc
             
             int n=0;
-            double RCO2old=RCO2*2.0; /** new line */
+            RCO2old=RCO2*2.0; /** new line */
             if (i>381) 
             {
                 // this first step is an initialization kluge to ensure that the convergence 
                 // is not satisfied accidentally at the first step
-                double Fbbs;
-               
-                double fPBS;
+
                 while(Math.abs(RCO2/RCO2old-1.0)>0.001)
                 {
                     RCO2old=RCO2;
@@ -351,10 +354,10 @@ public class FactorValuedRun implements CO2Run
                         *Ws*fac+RT*GEOG[i-1]),0.65)*Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
                     //System.out.println("Fbbs: "+ Fbbs);
                     
-                    double W=((0.5+ACT*GCM)*Math.pow(RCO2,(-0.5+ACT*GCM)))
+                    W=((0.5+ACT*GCM)*Math.pow(RCO2,(-0.5+ACT*GCM)))
                             *Math.pow((1+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),0.65)
                             *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double V=Math.pow(RCO2,(0.5+ACT*GCM))*0.65
+                    V=Math.pow(RCO2,(0.5+ACT*GCM))*0.65
                             *Math.pow((1.0+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),(-0.35))
                             *(RT*GCM/RCO2)*Math.exp(-ACT*Ws*fac)*Math.exp(ACT*GEOG[i-1]);
                     //System.out.println("W = "+W);
@@ -384,27 +387,27 @@ public class FactorValuedRun implements CO2Run
                 while(Math.abs(RCO2/RCO2old-1.0)>0.001)
                 {
                     RCO2old=RCO2;
-                    double oldfBBS=Math.pow(RCO2,(0.5+ACT*GCM))*Math.pow((1+RT*GCM*Math.log(RCO2)
+                    oldfBBS=Math.pow(RCO2,(0.5+ACT*GCM))*Math.pow((1+RT*GCM*Math.log(RCO2)
                         -RT*Ws*(fac)+RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double oldW=(0.5+ACT*GCM)*Math.pow(RCO2,(-0.5+ACT*GCM))
+                    oldW=(0.5+ACT*GCM)*Math.pow(RCO2,(-0.5+ACT*GCM))
                         *Math.pow((1.0+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)
                         +RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double oldV=Math.pow(RCO2,(0.5+ACT*GCM))*0.65*Math.pow((1.0+RT*GCM*Math.log(RCO2)
+                    oldV=Math.pow(RCO2,(0.5+ACT*GCM))*0.65*Math.pow((1.0+RT*GCM*Math.log(RCO2)
                         -RT*Ws*(fac)+RT*GEOG[i-1]),(-0.35))*(RT*GCM/RCO2)
                         *Math.exp(-ACT*Ws*fac)*Math.exp(ACT*GEOG[i-1]);
-                    double oldfPBS = oldW + oldV;
-                    double oldX=0.0;
-                    double ewfBBS=(Math.pow(2.0,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
+                    oldfPBS = oldW + oldV;
+                    oldX=0.0;
+                    ewfBBS=(Math.pow(2.0,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
                         *Math.pow((1+RCO2),(-FERT))
                         *Math.pow((1.0+RT*GCM*Math.log(RCO2)-RT*Ws*fac+RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double ewW=Math.pow(2.0,FERT)*(FERT+ACT*GCM)*Math.pow(RCO2,(FERT+ACT*GCM-1.0))
+                    ewW=Math.pow(2.0,FERT)*(FERT+ACT*GCM)*Math.pow(RCO2,(FERT+ACT*GCM-1.0))
                         *Math.pow((1.0+RCO2),(-FERT))*Math.pow((1.0+RT*GCM*Math.log(RCO2)
                         -RT*Ws*(fac)+RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double ewV=(-FERT*Math.pow((1.0+RCO2),(-(1.0+FERT))))
+                    ewV=(-FERT*Math.pow((1.0+RCO2),(-(1.0+FERT))))
                         *((Math.pow(2,FERT))*Math.pow(RCO2,(FERT+ACT*GCM)))
                         *Math.pow((1.0+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
@@ -412,12 +415,12 @@ public class FactorValuedRun implements CO2Run
                     //System.out.println("ewV\tFERT\tRCO2\tACT\tGCM\tRT\tWs\tfac\tGEOG[i-1]");
                     //System.out.println(ewV+"\t"+FERT+" \t "+RCO2+" \t "+ACT+" \t "+GCM+" \t "+RT+" \t "+Ws+" \t "+fac+" \t "+GEOG[i-1]);
                     
-                    double ewX=0.65*Math.pow((1.0+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),(-0.35))
+                    ewX=0.65*Math.pow((1.0+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),(-0.35))
                         *(RT*GCM/RCO2)*(Math.pow(2,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
                         *Math.pow((1+RCO2),(-FERT))*Math.exp(-ACT*Ws*fac)*Math.exp(ACT*GEOG[i-1]);
-                    double ewfPBS=ewW+ewV+ewX;
-                    double fBBS=((i-349)/32.)*oldfBBS + ((381-i)/32.)*ewfBBS;
-                    double fPBS=((i-349)/32.)*oldfPBS + ((381-i)/32.)*ewfPBS;
+                    ewfPBS=ewW+ewV+ewX;
+                    fBBS=((i-349)/32.)*oldfBBS + ((381-i)/32.)*ewfBBS;
+                    fPBS=((i-349)/32.)*oldfPBS + ((381-i)/32.)*ewfPBS;
                     
                     //System.out.println("oldfBBS\toldW\toldV\toldfPBS\toldX\tewfBBS\tewW\tewV\tewX\tewfPBS\tfBBS\tfPBS");
                     //System.out.println(oldfBBS+"\t"+oldW+"\t"+oldV+"\t"+oldfPBS+"\t"+oldX+"\t"+ewfBBS+"\t"+ewW+"\t"+ewV+"\t"+ewX+"\t"+ewfPBS+"\t"+fBBS+"\t"+fPBS);
@@ -436,27 +439,25 @@ public class FactorValuedRun implements CO2Run
             {
                 //RCO2old=RCO2*2.0;
                 //System.out.println("ifC");
-                int elseCount=0;
                 while(Math.abs(RCO2/RCO2old-1.0)>0.001)
                 {
-                    elseCount++;
                     RCO2old=RCO2;
-                    double Fbbs=(Math.pow(2,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
+                    Fbbs=(Math.pow(2,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
                         *Math.pow((1+RCO2),(-FERT))
                         *Math.pow((1+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double W=Math.pow(2,FERT)*(FERT+ACT*GCM)*Math.pow(RCO2,(FERT+ACT*GCM-1))
+                    W=Math.pow(2,FERT)*(FERT+ACT*GCM)*Math.pow(RCO2,(FERT+ACT*GCM-1))
                         *Math.pow((1+RCO2),(-FERT))
                         *Math.pow((1+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double V=(-FERT*Math.pow((1+RCO2),(-(1.+FERT))))*(Math.pow(2,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
+                    V=(-FERT*Math.pow((1+RCO2),(-(1.+FERT))))*(Math.pow(2,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
                         *Math.pow((1+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)+RT*GEOG[i-1]),0.65)
                         *Math.exp(-ACT*Ws*(fac))*Math.exp(ACT*GEOG[i-1]);
-                    double X=0.65*Math.pow((1+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)
+                    X=0.65*Math.pow((1+RT*GCM*Math.log(RCO2)-RT*Ws*(fac)
                         +RT*GEOG[i-1]),(-0.35))*(RT*GCM/RCO2)
                         *(Math.pow(2,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))*Math.pow((1+RCO2),(-FERT))
                         *Math.exp(-ACT*Ws*fac)*Math.exp(ACT*GEOG[i-1]);
-                    double fPBS=W+V+X;
+                    fPBS=W+V+X;
                     if(RCO2>((Fbbs-fB)/fPBS))
                         RCO2=RCO2-0.9*((Fbbs-fB)/fPBS);
                         // damp the iteration to avoid overshoot
@@ -468,6 +469,7 @@ public class FactorValuedRun implements CO2Run
                 //System.out.println(elseCount);
             }
             // the CO2 ppm is converted from RCO2 by last My average value = 250 ppm
+            
             double tau=15 + 6*Math.log(RCO2)-12.8*fac+GEOG[i-1];
             //double oxy2 =100*(oxy/(oxy+143.0));
             //System.out.println("RCO2: "+RCO2);
