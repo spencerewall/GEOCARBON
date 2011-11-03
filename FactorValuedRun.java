@@ -1,9 +1,9 @@
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Arrays;
 /**
  * This class will run a simulation for a specific set of values for act, fert, life, gym, and glac.
  */
-public class FactorValuedRun extends CO2Run
+public class FactorValuedRun implements CO2Run
 {
     private static boolean staticInit = false;
     
@@ -51,6 +51,7 @@ public class FactorValuedRun extends CO2Run
     private double LIFE;
     private double GYM;
     private double GLAC;
+    private double[] CO2;
     
     public FactorValuedRun(double deltat, double act, double fert, double life, double gym, double glac)
     {
@@ -78,11 +79,20 @@ public class FactorValuedRun extends CO2Run
     public double getGLAC() { return GLAC; }
     public String toString()
     {
-        return getAllCO2().toString();
+        return Arrays.toString(CO2);
     }
-    /**
-     * 
-     */
+    public double getCO2(int i)
+    {
+        return CO2[i];
+    }
+    public double[] getAllCO2()
+    {
+        return CO2;
+    }
+    public int size()
+    {
+        return CO2.length;
+    }
     public boolean equals(Object other)
     {
         if (this==other)
@@ -107,16 +117,15 @@ public class FactorValuedRun extends CO2Run
         double[] factors = {deltaT, ACT, FERT, LIFE, GYM, GLAC};
         return Arrays.hashCode(factors);
     }
-    static double[] gcsppm = new double[800];
-    static double[] fAD = new double[600];
-    static double oxy, RCO2, Spy, Spa, Ssy, Ssa, Gy, Ga, Cy, Ca, dlsy, dlcy, dlpy, dlpa, dlsa, dlgy, dlga, dlca, Rcy, Rca;
-    static ArrayList<Double> CO2Temp;
+    private static double[] gcsppm = new double[800];
+    private static double[] fAD = new double[600];
+    private static double oxy, RCO2, Spy, Spa, Ssy, Ssa, Gy, Ga, Cy, Ca, dlsy, dlcy, dlpy, dlpa, dlsa, dlgy, dlga, dlca, Rcy, Rca;
     /**
      * Calculates CO2 values for this FactorValuedRun object.  Values are generated based on the factors specified
      * in the construction of this instance of FactorValuedRun.
      */
     
-    private static ArrayList<Double> doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC)
+    private static double[] doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC)
     {
         //The following variables need to be reset each time a run is performed
         oxy=25.0;    //oxy is oxygen level in atmosphere, in percent mass (Berner 2009)
@@ -134,7 +143,7 @@ public class FactorValuedRun extends CO2Run
         Arrays.fill(gcsppm, 0);
         Arrays.fill(fAD, 0);
         
-        CO2Temp = new ArrayList<Double>(60);
+        double[] CO2Temp = new double[58];
         
         //CO2.clear(); 
         // iberner is a counter for correspondence to earlier codes
@@ -475,21 +484,20 @@ public class FactorValuedRun extends CO2Run
                 int k=1+i/10;
                 
                 // save CO2 level (ppm) or oxygen (mass percent)
-                CO2Temp.add(0,new Double(ppm));
+                CO2Temp[k-1] = ppm;
             }
             gcsppm[i-1]=ppm;
         }
-        CO2Temp.trimToSize();
         return CO2Temp;
     }
     // Bas calculated oceanic Sr-isotope ratio for basalt-seawater reactions - Bas(571)=0.709
-    static double[] Bas = new double[600];
-    static double[] DELTOT = new double[600];
-    static double[] DELRIV = new double[600];
-    static double[] DELBAS = new double[600];
+    private static double[] Bas = new double[600];
+    private static double[] DELTOT = new double[600];
+    private static double[] DELRIV = new double[600];
+    private static double[] DELBAS = new double[600];
     // R is the actual measured Sr-isotope ratio
-    static double[] R = new double[600];
-    static double[] SRBAS = new double[600];
+    private static double[] R = new double[600];
+    private static double[] SRBAS = new double[600];
     private static void initializeStaticRunVars()
     {
         Arrays.fill(Bas, 0);
