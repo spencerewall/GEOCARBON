@@ -8,8 +8,10 @@
 public interface FactorGenerator
 {
     /**
-     * Returns a pseudorandom <code>double</code> from this Gaussian distribution.
+     * Returns the next value from this FactorGenerator object
      */
-    double getRandom();
-    
+    double getNextValue();
+    double[] getValueList(int len);
+    double getNextPositive();
+    double[] getPositiveValueList(int len);
 }
