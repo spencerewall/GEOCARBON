@@ -32,7 +32,7 @@ public class GEOCARB3
         int ndel=28;
         double deltaT=.28;
         
-        CO2Run[] tests = new CO2Run[270000];
+        CO2Run[] tests = new CO2Run[280000];
         
         for (int iiit=0; iiit<ndel; iiit++)
         {
@@ -58,7 +58,7 @@ public class GEOCARB3
         }
         
         float[] arr = m.getAllCO2();
-        for (double d: arr)
+        for (float d: arr)
             System.out.print(d);
         /*
         try
