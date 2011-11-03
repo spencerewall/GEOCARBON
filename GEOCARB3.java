@@ -51,13 +51,13 @@ public class GEOCARB3
         } 
         System.out.println("Done calculating.  Begin write.");
         
-        /*MeanRun m = new MeanRun();
+        MeanRun m = new MeanRun();
         for (int i=0; i<tests.length; i++)
         {
             m.include(tests[i]);
         }
         
-        double[] arr = m.getAllCO2();
+        float[] arr = m.getAllCO2();
         for (double d: arr)
             System.out.print(d);
         /*

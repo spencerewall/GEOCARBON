@@ -5,6 +5,13 @@ import java.util.Arrays;
  */
 public class FactorValuedRun implements CO2Run
 {
+    private double deltaT;
+    private double ACT;
+    private double FERT;
+    private double LIFE;
+    private double GYM;
+    private double GLAC;
+    private float[] CO2;
     private static boolean staticInit = false;
     
     // GCM is the DT for CO2-doubling, divided by ln 2, so when you mult by log(RCO2) you obtain deltaT when RCO2=2    
@@ -45,14 +52,6 @@ public class FactorValuedRun implements CO2Run
     private static double Fmp1=0.25;
     private static double Fms1=0.5;
     
-    private double deltaT;
-    private double ACT;
-    private double FERT;
-    private double LIFE;
-    private double GYM;
-    private double GLAC;
-    private double[] CO2;
-    
     public FactorValuedRun(double deltat, double act, double fert, double life, double gym, double glac)
     {
         deltaT = deltat;
@@ -80,11 +79,11 @@ public class FactorValuedRun implements CO2Run
     {
         return Arrays.toString(CO2);
     }
-    public double getCO2(int i)
+    public float getCO2(int i)
     {
         return CO2[i];
     }
-    public double[] getAllCO2()
+    public float[] getAllCO2()
     {
         return CO2;
     }
@@ -134,7 +133,7 @@ public class FactorValuedRun implements CO2Run
      * Calculates CO2 values for this FactorValuedRun object.  Values are generated based on the factors specified
      * in the construction of this instance of FactorValuedRun.
      */
-    private static double[] doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC)
+    private static float[] doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC)
     {
         //The following variables need to be reset each time a run is performed
         oxy=25.0;    //oxy is oxygen level in atmosphere, in percent mass (Berner 2009)
@@ -152,7 +151,7 @@ public class FactorValuedRun implements CO2Run
         Arrays.fill(gcsppm, 0);
         Arrays.fill(fAD, 0);
         
-        double[] CO2Temp = new double[58];
+        float[] CO2Temp = new float[58];
         
         //CO2.clear(); 
         // iberner is a counter for correspondence to earlier codes
@@ -486,7 +485,7 @@ public class FactorValuedRun implements CO2Run
                 int k=1+i/10;
                 
                 // save CO2 level (ppm) or oxygen (mass percent)
-                CO2Temp[k-1] = ppm;
+                CO2Temp[k-1] = (float)ppm;
             }
             gcsppm[i-1]=ppm;
         }

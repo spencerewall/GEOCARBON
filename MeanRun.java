@@ -5,15 +5,15 @@ import java.util.Arrays;
 public class MeanRun implements CO2Run
 {
     private LinkedList<CO2Run> includeLst;
-    private double[] meanData;
-    private double[] sum;
+    private float[] meanData;
+    private float[] sum;
     private boolean change;
     
     public MeanRun()
     {
         includeLst = new LinkedList<CO2Run>();
-        meanData = new double[0];
-        sum = new double[0];
+        meanData = new float[0];
+        sum = new float[0];
         change = false;
     }
     /**
@@ -32,7 +32,7 @@ public class MeanRun implements CO2Run
         
         if (includeLst.size()==1)   //first time a run is being added
         {
-            sum=new double[r.size()];
+            sum=new float[r.size()];
             Arrays.fill(sum, 0);
         }
         for (int i=0; i<r.size(); i++)
@@ -54,13 +54,13 @@ public class MeanRun implements CO2Run
         }
         change=false;
     }
-    public double getCO2(int i)
+    public float getCO2(int i)
     {
         if (change)
             calculateMean();
         return meanData[i];
     }
-    public double[] getAllCO2()
+    public float[] getAllCO2()
     {
         if (change)
             calculateMean();
