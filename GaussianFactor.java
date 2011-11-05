@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.Arrays;
 
 /**
  * This class imitates a bell curve.
@@ -9,26 +10,42 @@ import java.util.Random;
  */
 public class GaussianFactor implements FactorGenerator
 {
-    private double mean; //mu
-    private double stDev; // theta
+    private boolean bounded;
+    private double max;
+    private double min;
+    private double mean;
+    private double stDev;
     private Random r;
-    
     /**
-     * Constructs a BellCurve Object centered around the given average with a given standardDeviation.
+     * Constructs a GaussianFactor Object centered around the given average with a given standardDeviation.
      */
     public GaussianFactor(double average,  double standardDeviation)
     {
         mean = average;
         stDev = standardDeviation;
+        bounded = false;
+        max=Double.POSITIVE_INFINITY;
+        max=Double.NEGATIVE_INFINITY;
         r = new Random();
     }
     /**
-     * Constructs a BellCurve Object over a finite data set with a given high and low value.
+     * Constructs a GaussianFactor Object 
+     * 
+     * 
+     * @param high2StDev the value located 2 standard deviations above the mean
+     * @param low2StDev the value located 2 standard deviations below the mean
+     * @param devNum the number of standard deviations that high and low are from the mean
      */
-    public GaussianFactor(double low, double high, boolean wat)
+    public GaussianFactor(double lowVal, double highVal, double devNum)
     {
-        mean = (low+high)/2;
-        stDev = (high-low)/2;
+        bounded = true;
+        
+        max = highVal;
+        min = lowVal;
+        mean = (lowVal+highVal)/2;
+        stDev = ((highVal-lowVal)/2)/devNum; //(newRange/initRange) /devNum
+
+        
         r = new Random();
     }
     /**
@@ -46,49 +63,85 @@ public class GaussianFactor implements FactorGenerator
         return stDev;
     }
     /**
-     * Returns a positively limited pseudorandom <code>double</code> from this Gaussian distribution.  
-     * This method will only generate values between 0 and 2xMean (inclusive).  The upper end is limited
-     * by 2xMean so that values will still be evenly distributed.
-     */
-    public double getNextPositive()
-    {
-        double val=-1;
-        while ((val<0) || (val>getMean()*2))
-        {
-            val = getNextValue();
-        }
-        return val;
-    }
-    /**
      * Returns a pseudorandom <code>double</code> from this Gaussian distribution.
      */
     public double getNextValue()
     {
-        double gauss = r.nextGaussian();
-        return ((gauss*stDev)+mean);
+        double g = r.nextGaussian();
+        return transformNormal(g);
     }
     /**
-     * Returns an array of pseudorandom <code>doubles</code> as defined by getRandom()
+     * Returns an array of pseudorandom <code>doubles</code> as defined by Random.nextGaussian()
      * 
      * @param len 
      * @return an array of pseudorandom doubles from this gaussian distribution
      */
     public double[] getValueList(int len)
     {
-        double[] arr = new double[len];
-        for (int i = 0; i< arr.length; i++)
+        double[] g = new double[len];
+        for (int i = 0; i< len; i++)
         {
-            arr[i]=getNextValue();
+            g[i]=getNextValue();
         }
-        return arr;
+        return g;
     }
-    public double[] getPositiveValueList(int len)
+    public double[] tryValueList(int len)
     {
-        double[] arr = new double[len];
-        for (int i = 0; i< arr.length; i++)
+        double[] g = new double[len];
+        int index = 0;
+        for (int i = 0; i< len; i++)
         {
-            arr[i]=getNextPositive();
+            double v=getNextValue();
+            if (inRange(v))
+            {
+                g[index]=v;
+                index++;
+            }
         }
-        return arr;
+        return Arrays.copyOfRange(g, 0, index+1);
+    }
+    public double[] forceValueList(int len)
+    {
+        double[] g = new double[len];
+        int i=0;
+        while (i< len)
+        {
+            double v=getNextValue();
+            if (inRange(v))
+            {
+                g[i]=v;
+                i++;
+            }
+        }
+        for (double ga:g)
+        {
+            if (!inRange(ga))
+                System.out.println("BAD!");
+        }
+        return g;
+    }
+    /**
+     * Takes a number from a normal distribution (-1 to 1) and transforms it to a value on
+     * the distribution defined by this GaussianFactor object
+     * 
+     * @param n the normal value to be transformed
+     * @param the transformation of n onto the gaussian distribution defined by this Object
+     */
+    private double transformNormal(double n)
+    {
+        double g = (n*stDev)+mean;
+        return g;
+    }
+    public void setUpperBound(double n)
+    {
+        max = n;
+    }
+    public void setLowerBound(double n)
+    {
+        min = n;
+    }
+    public boolean inRange(double n)
+    {
+        return (n>=min)&&(n<=max);
     }
 }

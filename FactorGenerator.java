@@ -12,6 +12,7 @@ public interface FactorGenerator
      */
     double getNextValue();
     double[] getValueList(int len);
-    double getNextPositive();
-    double[] getPositiveValueList(int len);
+    //double getMax();
+    //double getMin();
+    //double getRange();
 }
