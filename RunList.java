@@ -5,30 +5,27 @@ import java.util.HashSet;
 public class RunList
 {
     
-    ArrayList <CO2Run> allRuns;
-    ArrayList <ArrayList<PPMRunPair>> timebuckets;
-    MeanRun mean = new MeanRun();
+    ArrayList <HistData> allRuns;
+    MeanRun mean;
     
     public RunList()
     {
         mean = new MeanRun();
-        allRuns = new ArrayList<CO2Run>();
-        timebuckets = new ArrayList<ArrayList<PPMRunPair>>();
+        allRuns = new ArrayList<HistData>();
+    }
+    public RunList(int initCapacity)
+    {
+        mean = new MeanRun();
+        allRuns = new ArrayList<HistData>(initCapacity);
     }
     /**
      * Adds the given run to the this RunList.
      * 
-     * @param run the CO2Run to be included
+     * @param run the CO2Run to be added
      * @return {<code>true} if this list changed as a result of the call
      */
-    public boolean add(CO2Run run)
+    public boolean add(HistData run)
     {
-        if (allRuns.isEmpty())
-        {
-            for (int i=0; i<run.size(); i++)
-                timebuckets.add(new ArrayList<PPMRunPair>());
-        }
-        
         boolean rAdd = allRuns.add(run);
         if (rAdd==false)
             return rAdd;
@@ -39,12 +36,6 @@ public class RunList
             allRuns.remove(run);
             return mAdd;
         }
-        
-        for(int i=0; i<run.size(); i++)
-        {
-            ArrayList<PPMRunPair> currentBucket = timebuckets.get(i);
-            currentBucket.add(new PPMRunPair(run.getCO2(i),run));
-        }
         return true;
     }
     
@@ -52,7 +43,7 @@ public class RunList
     {
         return allRuns.size();
     }
-    
+    /*
     public RunList selectPercentRange(double minPercentile, double maxPercentile)
     {
         HashSet<CO2Run> goodR = new HashSet<CO2Run>();
@@ -71,10 +62,10 @@ public class RunList
             finalLst.add(r);
         }
         return finalLst;
-    }
-    public CO2Run get(int i)
+    }*/
+    public HistData get(int i)
     {
-        CO2Run r = allRuns.get(i);
+        HistData r = allRuns.get(i);
         return r;
     }
     public MeanRun getMean()
@@ -82,33 +73,5 @@ public class RunList
         return mean;
     }
     
-    public class PPMRunPair implements Comparable{
-        private double pp; private CO2Run rn;
-        public PPMRunPair(double ppm, CO2Run r) {
-            pp=ppm; rn=r;
-        }
-        public int compareTo(Object other) throws ClassCastException{
-            if (this == other)
-                return 0;
-            if (!(other instanceof PPMRunPair))
-                throw new ClassCastException("PPMRunPair Object was expected.");
-            double otherPP = ((PPMRunPair)other).getPPM();
-            return (int) Math.signum(pp-otherPP);
-        }
-        public boolean equals(Object other) {
-            if (this==other)
-                return true;
-            if (!(other instanceof PPMRunPair))
-                return false;
-            PPMRunPair o = (PPMRunPair) other;
-            return ((pp==o.getPPM()));
-            
-        }
-        public double getPPM() {   
-            return pp; 
-        }
-        public CO2Run getRun() {
-            return rn; 
-        }
-    }
+    
 }

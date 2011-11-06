@@ -2,25 +2,25 @@ import java.util.LinkedList;
 //import java.util.Collection;
 import java.util.Arrays;
 
-public class MeanRun implements CO2Run
+public class MeanRun implements HistData
 {
-    private LinkedList<CO2Run> includeLst;
+    private LinkedList<HistData> includeLst;
     private float[] meanData;
-    private float[] sum;
+    private double[] sum;
     private boolean change;
     
     public MeanRun()
     {
-        includeLst = new LinkedList<CO2Run>();
+        includeLst = new LinkedList<HistData>();
         meanData = new float[0];
-        sum = new float[0];
+        sum = new double[0];
         change = false;
     }
     /**
      * Fail if
      *  (a) run is null
      */
-    public boolean include(CO2Run r)
+    public boolean include(HistData r)
     {
         if (!includeLst.isEmpty()) //tests if size is compatible
             if (this.size() != r.size())
@@ -32,7 +32,8 @@ public class MeanRun implements CO2Run
         
         if (includeLst.size()==1)   //first time a run is being added
         {
-            sum=new float[r.size()];
+            meanData=new float[r.size()];
+            sum=new double[r.size()];
             Arrays.fill(sum, 0);
         }
         for (int i=0; i<r.size(); i++)
@@ -50,7 +51,7 @@ public class MeanRun implements CO2Run
     {
         for (int i=0; i<sum.length; i++)
         {
-            meanData[i]=sum[i]/includeLst.size();
+            meanData[i]=(float) (sum[i] / (double) includeLst.size());
         }
         change=false;
     }
