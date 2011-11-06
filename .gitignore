@@ -1,3 +1,12 @@
 *.class
 *.ctxt
 *.hprof
+output.dat
+
+package.bluej
+
+.DS_Store
+
+meanOut.dat
+
+package.bluej
