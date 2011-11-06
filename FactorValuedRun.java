@@ -3,7 +3,7 @@ import java.util.Arrays;
 /**
  * This class will run a simulation for a specific set of values for act, fert, life, gym, and glac.
  */
-public class FactorValuedRun implements CO2Run
+public class FactorValuedRun implements HistData
 {
     private double deltaT;
     private double ACT;

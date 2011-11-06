@@ -12,8 +12,7 @@ public class GCSVDriverPR
         double deltaT=.28;
         double GYM=0, LIFE=0, ACT=0, FERT=0, GLAC=0;
         
-        CO2Run[] tests = new CO2Run[280000];
-        MeanRun m = new MeanRun();
+        RunList r = new RunList(280000);
         int count = 0;
         for (int iiit=0; iiit<ndel; iiit++)
         {
@@ -46,7 +45,7 @@ public class GCSVDriverPR
                             //if (c%10==9)
                             //    System.out.println();
                             FactorValuedRun thisRun = new FactorValuedRun(deltaT, ACT, FERT, LIFE, GYM, GLAC);
-                            tests[count]=thisRun;
+                            r.add(thisRun);
                             count++;
                         }// end do
                         // sift through the runs to find acceptable data fits  (chiquare <= NDAT; bias < 0.3)
@@ -55,7 +54,9 @@ public class GCSVDriverPR
                 }
             }
         }
+        System.out.println("Done calculating.  Begin write.");
         
+        UtilityMethods.writeRuns("output.dat",r);
     }
 
 }
