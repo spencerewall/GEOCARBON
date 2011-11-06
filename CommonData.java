@@ -6,11 +6,11 @@ public class CommonData implements HistData
     
     public CommonData()
     {
-        data = new ArrayList();
+        data = new ArrayList<HistData>();
     }
     public CommonData(int len)
     {
-        data = new ArrayList(len);
+        data = new ArrayList<HistData>(len);
     }
     public void nextPointFrom(HistData d)
     {
@@ -31,7 +31,7 @@ public class CommonData implements HistData
         while ( c<returnMe.length )
         {
             HistData thisRun = data.get(c);
-            
+            returnMe[c] = thisRun.getCO2(c);
         }
         return returnMe;
     }
@@ -61,12 +61,12 @@ public class CommonData implements HistData
     
     
     
-    public class PPMRunPair implements Comparable{
+    public class PPMRunPair implements Comparable<PPMRunPair>{
         private double pp; private HistData rn;
         public PPMRunPair(double ppm, HistData r) {
             pp=ppm; rn=r;
         }
-        public int compareTo(Object other) throws ClassCastException{
+        public int compareTo(PPMRunPair other) throws ClassCastException{
             if (this == other)
                 return 0;
             if (!(other instanceof PPMRunPair))

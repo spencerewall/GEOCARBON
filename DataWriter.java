@@ -1,6 +1,5 @@
 import java.io.FileWriter;
 import java.io.BufferedWriter;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.LinkedList;
 //File;
@@ -20,7 +19,7 @@ public class DataWriter
         {
             FileWriter fstream = new FileWriter(fileName);
             writeTo = new BufferedWriter(fstream);
-            columns = new LinkedList();
+            columns = new LinkedList<Collection<Number>>();
             anonCols=0;
         }
         catch (java.io.IOException e)

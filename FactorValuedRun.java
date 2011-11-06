@@ -126,7 +126,7 @@ public class FactorValuedRun implements HistData
     private static double Fob0, Xvolc0, Fwsi0, Avlc, Bvlc, Dvlc, Evlc, Xvolc, fvolc, fB;
     private static double RCO2old;
     private static double Fbbs, fPBS, W, V;
-    private static double oldfBBS, oldW, oldV, oldfPBS, oldX, ewfBBS, ewW, ewV, ewX, ewfPBS, fBBS;
+    private static double oldfBBS, oldW, oldV, oldfPBS, ewfBBS, ewW, ewV, ewX, ewfPBS, fBBS;
     private static double X;
     private static double tau, ppm;
     /**
@@ -397,7 +397,6 @@ public class FactorValuedRun implements HistData
                         -RT*Ws*(fac)+RT*GEOG[i-1]),(-0.35))*(RT*GCM/RCO2)
                         *Math.exp(-ACT*Ws*fac)*Math.exp(ACT*GEOG[i-1]);
                     oldfPBS = oldW + oldV;
-                    oldX=0.0;
                     ewfBBS=(Math.pow(2.0,FERT)*Math.pow(RCO2,(FERT+ACT*GCM)))
                         *Math.pow((1+RCO2),(-FERT))
                         *Math.pow((1.0+RT*GCM*Math.log(RCO2)-RT*Ws*fac+RT*GEOG[i-1]),0.65)
@@ -421,8 +420,6 @@ public class FactorValuedRun implements HistData
                     fBBS=((i-349)/32.)*oldfBBS + ((381-i)/32.)*ewfBBS;
                     fPBS=((i-349)/32.)*oldfPBS + ((381-i)/32.)*ewfPBS;
                     
-                    //System.out.println("oldfBBS\toldW\toldV\toldfPBS\toldX\tewfBBS\tewW\tewV\tewX\tewfPBS\tfBBS\tfPBS");
-                    //System.out.println(oldfBBS+"\t"+oldW+"\t"+oldV+"\t"+oldfPBS+"\t"+oldX+"\t"+ewfBBS+"\t"+ewW+"\t"+ewV+"\t"+ewX+"\t"+ewfPBS+"\t"+fBBS+"\t"+fPBS);
                     
                     if(RCO2>((fBBS-fB)/fPBS))
                         RCO2=RCO2-0.9*((fBBS-fB)/fPBS);
@@ -469,10 +466,10 @@ public class FactorValuedRun implements HistData
             }
             // the CO2 ppm is converted from RCO2 by last My average value = 250 ppm
             
-            double tau=15 + 6*Math.log(RCO2)-12.8*fac+GEOG[i-1];
+            tau=15 + 6*Math.log(RCO2)-12.8*fac+GEOG[i-1];
             //double oxy2 =100*(oxy/(oxy+143.0));
             //System.out.println("RCO2: "+RCO2);
-            double ppm=250.0*RCO2;
+            ppm=250.0*RCO2;
             // the indexing here is time equals (i-1)Ma, save the ppm values at 10-Ma intervals,
             // K=1 --> 0Ma
             if(((i-1)/10)*10 == i-1)

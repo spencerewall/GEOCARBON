@@ -10,8 +10,7 @@ import java.util.Arrays;
  */
 public class GaussianFactor implements FactorGenerator
 {
-    private boolean bounded;
-    private double max;
+	private double max;
     private double min;
     private double mean;
     private double stDev;
@@ -23,7 +22,6 @@ public class GaussianFactor implements FactorGenerator
     {
         mean = average;
         stDev = standardDeviation;
-        bounded = false;
         max=Double.POSITIVE_INFINITY;
         max=Double.NEGATIVE_INFINITY;
         r = new Random();
@@ -38,14 +36,10 @@ public class GaussianFactor implements FactorGenerator
      */
     public GaussianFactor(double lowVal, double highVal, double devNum)
     {
-        bounded = true;
-        
+    	mean = (lowVal+highVal)/2;
+        stDev = ((highVal-lowVal)/2)/devNum; //(newRange/initRange) /devNum
         max = highVal;
         min = lowVal;
-        mean = (lowVal+highVal)/2;
-        stDev = ((highVal-lowVal)/2)/devNum; //(newRange/initRange) /devNum
-
-        
         r = new Random();
     }
     /**

@@ -13,7 +13,6 @@ public class GCSVDriverPR
         double GYM=0, LIFE=0, ACT=0, FERT=0, GLAC=0;
         
         RunList r = new RunList(280000);
-        int count = 0;
         for (int iiit=0; iiit<ndel; iiit++)
         {
             deltaT = deltaT+0.12*(1.0+4.0*((float) (iiit))/((float) (ndel-1)));
@@ -46,7 +45,6 @@ public class GCSVDriverPR
                             //    System.out.println();
                             FactorValuedRun thisRun = new FactorValuedRun(deltaT, ACT, FERT, LIFE, GYM, GLAC);
                             r.add(thisRun);
-                            count++;
                         }// end do
                         // sift through the runs to find acceptable data fits  (chiquare <= NDAT; bias < 0.3)
                         // write to disk

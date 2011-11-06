@@ -1,5 +1,4 @@
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GEOCARB3
@@ -14,7 +13,6 @@ public class GEOCARB3
      */
     public static void main(String[] args)
     {
-        String[] cols = {"Age(Ma)", "CO2 Predict..."};
         GaussianFactor ACTBell = new GaussianFactor(.03,.13,3);
         GaussianFactor FERTBell = new GaussianFactor(.2,.8,3);
         GaussianFactor LIFEBell = new GaussianFactor(.125,.5,3);
