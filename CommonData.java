@@ -20,6 +20,10 @@ public class CommonData implements HistData
     {
         return data.get(i).getCO2(i);
     }
+    public HistData getDataSource(int i)
+    {
+        return data.get(i);
+    }
     public float[] getAllCO2()
     {
         float[] returnMe = new float[data.get(0).size()];
