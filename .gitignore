@@ -2,11 +2,8 @@
 *.ctxt
 *.hprof
 output.dat
-
+__SHELL44.java
 package.bluej
-
 .DS_Store
-
 meanOut.dat
-
 package.bluej
