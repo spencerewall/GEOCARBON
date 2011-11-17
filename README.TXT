@@ -6,6 +6,16 @@ file name "gcsv" stands for GeoCarbSulfVolc.
 PROJECT TITLE: GEOCARBSULF
 AUTHORS: SPENCER EWALL
 
+1. Add ability to change glacial intervals
+2. Volcanic degassing
+3. Worsley1991 compare his past continental area values to berners
+4. GEOCARB3 
+
+
+
+
+
+
 The following is the original fortran code:
 
 c program gcsv10_export.f  
