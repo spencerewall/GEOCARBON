@@ -1,3 +1,4 @@
+package dataHistographs;
 import java.util.Scanner;
 import java.io.File;
 /**
@@ -5,60 +6,84 @@ import java.io.File;
  * 
  * @author Spencer Ewall 
  */
-public class Proxy_Data
+public class ProxyData implements HistData
 {
     public static final String proxy2010="co2proxy_2010.dat";
     public static final String proxy2007="co2proxy_2007.dat";
     
     private String file_name;
+    private float[][] proxy_data;
     private int lines;
-    private double[][] proxy_data;
 
     /**
      * Constructor for objects of class Proxy_Scanner
      */
-    public Proxy_Data()
+    public ProxyData()
     {
         file_name=proxy2010;
         lines=countLines()-1;
+        proxy_data=new float[4][lines];
         proxy_data=file2Array(proxy2010);
     }
     
-    public Proxy_Data(String filePath)
+    public ProxyData(String filePath)
     {
         file_name=filePath;
         lines=countLines()-1;
         proxy_data=file2Array(filePath);
     }
-    
-    public double[][] getProxyArray()
+    public boolean equals(Object other)
+    {
+        if (this==other)
+            return true;
+        if (!(other instanceof ProxyData))
+            return false;
+        ProxyData o = (ProxyData) other;
+        return this.getProxyArray().equals(o.getProxyArray());
+    }
+    public int hashCode()
+    {
+        return java.util.Arrays.hashCode(this.getProxyArray());
+    }
+    public float[][] getProxyArray()
     {
         return proxy_data;
     }
-    public double getAge(int index)
+    public float getAge(int i)
     { 
-        return proxy_data[0][index]; 
+        return proxy_data[0][i]; 
     }
-    public double getPPM(int index)
-    { 
-        return proxy_data[1][index];
-    }
-    public double getPLo(int index)
-    { 
-        return proxy_data[2][index]; 
-    }
-    public double getPHi(int index)
-    { 
-        return proxy_data[3][index]; 
-    }
-    
-    public int getLines()
+    public float getCO2(int i)
     {
-        return lines;
+        return proxy_data[1][i];
+    }
+    public float[] getAllCO2()
+    {
+        return proxy_data[1];
+    }
+    public float getPLo(int i)
+    { 
+        return proxy_data[2][i]; 
+    }
+    public float[] getAllPLo(int i)
+    { 
+        return proxy_data[2]; 
+    }
+    public float getPHi(int i)
+    { 
+        return proxy_data[3][i]; 
+    }
+    public float[] getAllPHi(int i)
+    { 
+        return proxy_data[3]; 
     }
     public String getFileName()
     {
         return file_name;
+    }
+    public int size()
+    {
+        return lines;
     }
     
     
@@ -67,19 +92,20 @@ public class Proxy_Data
    /**
     * private methods.  These aid in the use of the structure, mostly in construction.
     */
-    private double[][] file2Array(String fileName)
+    private float[][] file2Array(String fileName)
     {
-        double[][] data=new double[4][lines];
+        float[][] data=new float[4][lines];
         try {
             Scanner arrConverter=new Scanner(new File(fileName));
+            
             int line=0;
             arrConverter.nextLine();
-            while (line<lines && arrConverter.hasNextLine())
+            while (arrConverter.hasNextLine())
             {
                 int row=0;
-                while (row<4 && arrConverter.hasNextDouble())
+                while (row<4 && arrConverter.hasNextFloat())
                 {
-                    data[row][line] = arrConverter.nextDouble();
+                    data[row][line] = arrConverter.nextFloat();
                     row++;
                 }
                 line++;
@@ -90,7 +116,6 @@ public class Proxy_Data
         }
         return data;
     }
-    
     private int countLines()
     {
         int count=0;

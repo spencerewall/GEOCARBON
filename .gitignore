@@ -7,4 +7,4 @@ package.bluej
 .DS_Store
 meanOut.dat
 package.bluej
-doc
+doc/*
