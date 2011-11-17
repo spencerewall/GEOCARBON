@@ -1,3 +1,4 @@
+package factorInput;
 
 /**
  * Write a description of interface FactorGenerator here.
