@@ -1,19 +1,7 @@
-//import java.util.ArrayList;
 import java.util.Arrays;
-/**
- * This class will run a simulation for a specific set of values for act, fert, life, gym, and glac.
- */
-public class FactorValuedRun implements HistData
+
+public class CO2Calculator
 {
-    private double deltaT;
-    private double ACT;
-    private double FERT;
-    private double LIFE;
-    private double GYM;
-    private double GLAC;
-    private float[] CO2;
-    private static boolean staticInit = false;
-    
     // GCM is the DT for CO2-doubling, divided by ln 2, so when you mult by log(RCO2) you obtain deltaT when RCO2=2    
     private static double GCM0;
     private static double[] GEOG=new double[600];
@@ -26,12 +14,10 @@ public class FactorValuedRun implements HistData
     private static double[] DLCOC=new double[600];
     private static double[] alphac=new double[600];
     private static double[] fL=new double[600];
-    private static double[] fSr = GCSV_Data.fillFSr();
-    private static double[] Sr = GCSV_Data.fillSr();
+    
     private static double[] fRT = new double[600];
     private static double ZM=12.5;
     private static double RBAS=.703;
-    private static double FBASO=.92;
     private static double RRIV=.711;
     private static double FRIV=3.37;
     private static int Dt=1;            // time step = 1mil yrs
@@ -52,69 +38,9 @@ public class FactorValuedRun implements HistData
     private static double Fmp1=0.25;
     private static double Fms1=0.5;
     
-    public FactorValuedRun(double deltat, double act, double fert, double life, double gym, double glac)
-    {
-        deltaT = deltat;
-        ACT = act;
-        FERT = fert;
-        LIFE = life;
-        GYM = gym;
-        GLAC = glac;
-        
-        GCM0 = deltaT/Math.log(2.0);
-        if (!staticInit)
-        {
-            initializeStaticRunVars();
-            staticInit=true;
-        }
-        CO2 = doCO2Calc(deltat, act, fert, life, gym, glac);
-    }
-    public double getDeltaT(){ return deltaT; }
-    public double getACT() { return ACT; }
-    public double getFERT() { return FERT; }
-    public double getLIFE() { return LIFE; }
-    public double getGYM() { return GYM; }
-    public double getGLAC() { return GLAC; }
-    public String toString()
-    {
-        return Arrays.toString(CO2);
-    }
-    public float getCO2(int i)
-    {
-        return CO2[i];
-    }
-    public float[] getAllCO2()
-    {
-        return CO2;
-    }
-    public int size()
-    {
-        return CO2.length;
-    }
-    public boolean equals(Object other)
-    {
-        if (this==other)
-            return true;
-        if (!(other instanceof FactorValuedRun))
-            return false;
-        FactorValuedRun o = (FactorValuedRun) other;
-        return ((this.getDeltaT()==o.getDeltaT())&&
-                (this.getACT()==o.getACT())&&
-                (this.getFERT()==o.getFERT())&&
-                (this.getLIFE()==o.getLIFE())&&
-                (this.getGYM()==o.getGYM())&&
-                (this.getGLAC()==o.getGLAC()));
-    }
-    /**
-     * Returns a hash code for this <code>FactorValuedRun</code> object.  The factor values from the construction of this Object are placed
-     * in an array: {deltaT, ACT, FERT, LIFE, GYM, GLAC}.  The hashCode of this object is calculated from the result
-     * of java.util.Arrays.hashCode(double[]), such that the input is the previously defined array.
-     */
-    public int hashCode()
-    {
-        double[] factors = {deltaT, ACT, FERT, LIFE, GYM, GLAC};
-        return Arrays.hashCode(factors);
-    }
+    private static double[] fSr;
+    private static double[] Sr;
+    
     private static double[] gcsppm = new double[800];
     private static double[] fAD = new double[600];
     private static double oxy, RCO2, Spy, Spa, Ssy, Ssa, Gy, Ga, Cy, Ca, dlsy, dlcy, dlpy, dlpa, dlsa, dlgy, dlga, dlca, Rcy, Rca;
@@ -129,11 +55,142 @@ public class FactorValuedRun implements HistData
     private static double oldfBBS, oldW, oldV, oldfPBS, ewfBBS, ewW, ewV, ewX, ewfPBS, fBBS;
     private static double X;
     private static double tau, ppm;
+    
+    private static double[] oldFact = new double[6];
+    private static GCSVData oldArrays;
+    
+    public static void handleInputs(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC, GCSVData arrData)
+    {
+        if (deltaT!=oldFact[0])
+        {
+            GCM0 = deltaT/Math.log(2.0);
+            oldFact[0]=deltaT;
+        }
+        if (oldFact[1]!=ACT)
+        {
+            oldFact[1]=ACT;
+        }
+        if (oldFact[2]!=FERT)
+        {
+            oldFact[2]=FERT;
+        }
+        if (oldFact[3]!=LIFE)
+        {
+            oldFact[3]=LIFE;
+        }
+        if (oldFact[4]!=GYM)
+        {
+            oldFact[4]=GYM;
+        }
+        if (oldFact[5]!=GLAC)
+        {
+            oldFact[5]=GLAC;
+        }
+        if(!(oldArrays.equals(arrData)))
+        {
+            updateHistArrays(arrData);
+            oldArrays=arrData;
+        }
+    }
+    public static void updateHistArrays(GCSVData arrData)
+    {
+        if(oldArrays!=null)
+            if(oldArrays.equals(arrData))
+                return;
+        oldArrays=arrData;
+        System.out.println("Hey, somethings different about me");
+        
+        fSr = arrData.fillFSr();
+        //Sr is the normalized difference of basalt-predicted and measured Sr isotope ratios
+        Sr = arrData.fillSr();
+        
+        for (int i=0; i<=56; i++)
+        {
+            int jj=i*10;
+            for (int j=0;j<=9;j++)
+            {
+                fA[jj+j]=(j*arrData.getFA0(i+1)+(10-j)*arrData.getFA0(i))/10.0;
+                fD[jj+j]=(j*arrData.getFD0(i+1)+(10-j)*arrData.getFD0(i))/10.0;
+                temp[jj+j]=(j*arrData.getTemp0(i+1)+(10-j)*arrData.getTemp0(i))/10.0;
+                DLSOC[jj+j]=(j*arrData.getDLS0(i+1)+(10-j)*arrData.getDLS0(i))/10.0;
+                DLCOC[jj+j]=(j*arrData.getDLC0(i+1)+(10-j)*arrData.getDLC0(i))/10.0;
+                alphac[jj+j]=(j*arrData.getAl0(i+1)+(10-j)*arrData.getAl0(i))/10.0;
+                fL[jj+j]=(j*arrData.getFL0(i+1)+(10-j)*arrData.getFL0(i))/10.0;
+            }
+            fA[570]=arrData.getFA0(57);
+            fD[570]=arrData.getFD0(57);
+            temp[570]=arrData.getTemp0(57);
+            DLSOC[570]=arrData.getDLS0(57);
+            DLCOC[570]=arrData.getDLC0(57);
+            alphac[570]=arrData.getAl0(57);
+            fL[570]=arrData.getFL0(57);
+        }
+    }
+    
+   /** The variables below are used only within the initialize_fR_fRT() method.  Bas calculated oceanic Sr-isotope
+     * ratio for basalt-seawater reactions - Bas(571)=0.709.  R is the actual measured Sr-isotope ratio. */
+    private static double[] Bas = new double[600], DELTOT = new double[600], DELRIV = new double[600];
+    private static double[] DELBAS = new double[600],R = new double[600],SRBAS = new double[600];
     /**
-     * Calculates CO2 values for this FactorValuedRun object.  Values are generated based on the factors specified
-     * in the construction of this instance of FactorValuedRun.
+     * The main purpose of this section of code seems to be to initialize values of fR and fRT.  fR is used 
+     * a number of times throughout the code however the first loop seems to be entirely redundant since the second
+     * loop completely overwrites those values before they are even used.
+     * 
+     * Additionally, the variable R appears to be redundant as it doesn't seem to appear anywhere else in the code.
      */
-    private static float[] doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC)
+    private static void initialize_fR_fRT()
+    {
+        double FBASO=.92;
+        //double[] Bas = new double[600];double[] DELTOT = new double[600];double[] DELRIV = new double[600];double[] DELBAS = new double[600];double[] R = new double[600];double[] SRBAS = new double[600];
+        
+        Arrays.fill(Bas, 0);
+        double FBAS;
+        for (int it=570; it>=0; it--)
+        {
+            // test case would be fSR(T)=1
+            // Bas calculated oceanic Sr-isotope ratio for basalt-seawater reactions
+            // starts with Bas(570)=0.709
+            FBAS=FBASO*fSr[it];
+            if (it<570) 
+                Bas[it]=Bas[it+1]+DELTOT[it+1];
+            else if (it==570)                       /**This line...*/
+                Bas[it]=0.709;
+            // fR is dimensionless effect of mountain uplift on CO2 uptake by silicate weathering
+            if(it==570)                 /**and this line could probably be put together...*/
+                fR[it]=1;               /**why don't we just say that fR[570]=1???*/
+            DELRIV[it]=((RRIV-Bas[it])/ZM)*FRIV;
+            DELBAS[it]=((RBAS-Bas[it])/ZM)*FBAS;
+            DELTOT[it]=DELBAS[it]+DELRIV[it];
+            
+            // R is the actual measured Sr-isotope ratio
+            R[it]=0.7+Sr[it]/10000.0;
+            // SRBAS is basalt-seawater Sr-isotope normalization, see Berner (2004) eq 2.1
+            SRBAS[it]=(Bas[it]-0.7)*10000;
+            
+            // PL is Berner's adjustable empirical parameter L for Sr-ratio vs. silcate weathering
+            // PL=2 obtains approximate fit between Sr-isotopes and physical erosion estimates 
+            // from siliclastic sediments, see Berner (2004)
+            int PL=2;
+
+            //fR is dimensionless effect of mountain uplift on CO2 uptake by silicate weathering
+            fR[it]=1-PL*(1-(Sr[it]/SRBAS[it]));
+        }
+        
+       /** This will generate values for cells 0-578 of fR and fRT.  Why we recalculate fR so 
+         * soon is beyond my understanding. */
+        for (int i=0; i<=578; i++)
+        {
+            //Cubic fit to Ronov sediment data
+            fRT[i]=25.269*Math.pow((-i)/1000.0,3) + 26.561*Math.pow((-i)/1000.0,2) 
+                   + 6.894*((-i)/1000.0) + 1.063;
+            fR[i]=Math.pow(fRT[i]/1.063,0.67);
+        }
+    }
+    /**
+     * This method handles all of the variables whos values change during a single run.  These variables
+     * keep track of important quantities that are needed to calculate CO2 values, but change at each timestep.
+     */
+    public static void resetMovingVars()
     {
         //The following variables need to be reset each time a run is performed
         oxy=25.0;    //oxy is oxygen level in atmosphere, in percent mass (Berner 2009)
@@ -150,6 +207,17 @@ public class FactorValuedRun implements HistData
         
         Arrays.fill(gcsppm, 0);
         Arrays.fill(fAD, 0);
+    }
+    public static float[] doCO2Calc(double deltaT, double ACT, double FERT, double LIFE, double GYM, double GLAC, GCSVData histFactors)
+    {
+        //From the fortran code, it looks like this should definitely appear first
+        //handleInputs(deltaT, ACT, FERT, LIFE, GYM, GLAC, histFactors);
+        GCM0 = deltaT/Math.log(2.0);
+        updateHistArrays(histFactors);
+        initialize_fR_fRT();
+        resetMovingVars();
+        
+        
         
         float[] CO2Temp = new float[58];
         
@@ -487,72 +555,5 @@ public class FactorValuedRun implements HistData
             gcsppm[i-1]=ppm;
         }
         return CO2Temp;
-    }
-    // Bas calculated oceanic Sr-isotope ratio for basalt-seawater reactions - Bas(571)=0.709
-    private static double[] Bas = new double[600];
-    private static double[] DELTOT = new double[600];
-    private static double[] DELRIV = new double[600];
-    private static double[] DELBAS = new double[600];
-    // R is the actual measured Sr-isotope ratio
-    private static double[] R = new double[600];
-    private static double[] SRBAS = new double[600];
-    private static void initializeStaticRunVars()
-    {
-        Arrays.fill(Bas, 0);
-        double FBAS;
-        for (int it=570; it>=0; it--)
-        {
-            // test case would be fSR(T)=1
-            FBAS=FBASO*fSr[it];
-            if (it<570) 
-                Bas[it]=Bas[it+1]+DELTOT[it+1];
-            else if (it==570) 
-                Bas[it]=0.709;
-            
-            if(it==570)
-                fR[it]=1;
-            DELRIV[it]=((RRIV-Bas[it])/ZM)*FRIV;
-            DELBAS[it]=((RBAS-Bas[it])/ZM)*FBAS;
-            DELTOT[it]=DELBAS[it]+DELRIV[it];
-            
-            
-            R[it]=0.7+Sr[it]/10000.0;
-            // SRBAS is basalt-seawater Sr-isotope normalization, see Berner (2004) eq 2.1
-            SRBAS[it]=(Bas[it]-0.7)*10000;
-            
-            // PL is Berner's adjustable empirical parameter L for Sr-ratio vs. silcate weathering
-            // PL=2 obtains approximate fit between Sr-isotopes and physical erosion estimates 
-            // from siliclastic sediments, see Berner (2004)
-            int PL=2;
-            fR[it]=1-PL*(1-(Sr[it]/SRBAS[it]));
-        }
-        
-        for (int i=0; i<=56; i++)
-        {
-            int jj=i*10;
-            for (int j=0;j<=9;j++)
-            {
-                fA[jj+j]=(j*GCSV_Data.fA0[i+1]+(10-j)*GCSV_Data.fA0[i])/10.0;
-                fD[jj+j]=(j*GCSV_Data.fD0[i+1]+(10-j)*GCSV_Data.fD0[i])/10.0;
-                temp[jj+j]=(j*GCSV_Data.temp0[i+1]+(10-j)*GCSV_Data.temp0[i])/10.0;
-                DLSOC[jj+j]=(j*GCSV_Data.DLS0[i+1]+(10-j)*GCSV_Data.DLS0[i])/10.0;
-                DLCOC[jj+j]=(j*GCSV_Data.DLC0[i+1]+(10-j)*GCSV_Data.DLC0[i])/10.0;
-                alphac[jj+j]=(j*GCSV_Data.al0[i+1]+(10-j)*GCSV_Data.al0[i])/10.0;
-                fL[jj+j]=(j*GCSV_Data.fL0[i+1]+(10-j)*GCSV_Data.fL0[i])/10.0;
-            }
-            fA[570]=GCSV_Data.fA0[57];
-            fD[570]=GCSV_Data.fD0[57];
-            temp[570]=GCSV_Data.temp0[57];
-            DLSOC[570]=GCSV_Data.DLS0[57];
-            DLCOC[570]=GCSV_Data.DLC0[57];
-            alphac[570]=GCSV_Data.al0[57];
-            fL[570]=GCSV_Data.fL0[57];
-        }
-        for (int i=0; i<=578; i++)
-        {
-            fRT[i]=25.269*Math.pow((-i)/1000.0,3) + 26.561*Math.pow((-i)/1000.0,2) 
-                   + 6.894*((-i)/1000.0) + 1.063;
-            fR[i]=Math.pow(fRT[i]/1.063,0.67);
-        }
     }
 }
