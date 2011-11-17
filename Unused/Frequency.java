@@ -1,3 +1,5 @@
+package Unused;
+
 public class Frequency
 {
     int hSegments;
