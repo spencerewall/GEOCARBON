@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import dataHistographs.*;
 
 public class RunList
 {
@@ -32,7 +34,7 @@ public class RunList
         if (mAdd==false)
         {
             allRuns.remove(run);
-            return mAdd;
+            return false;
         }
         return true;
     }
@@ -41,26 +43,37 @@ public class RunList
     {
         return allRuns.size();
     }
-    /*
-    public RunList selectPercentRange(double minPercentile, double maxPercentile)
+    public CommonData selectPercentileRun(double p)
     {
-        HashSet<CO2Run> goodR = new HashSet<CO2Run>();
-        for (ArrayList<PPMRunPair> time : timebuckets)
+        CommonData c = new CommonData();
+        DataComparator comp = new DataComparator();
+        int timeLen = allRuns.get(0).size();
+        for(int i = 0; i<timeLen; i++)
         {
-            Collections.sort(time);
-            int upperCell = (int) (time.size()*maxPercentile/100.0);
-            int lowerCell = (int) (time.size()*minPercentile/100.0);
-            ArrayList<PPMRunPair> limitT = (ArrayList)time.subList(lowerCell, upperCell);
-            for (PPMRunPair r : limitT)
-                goodR.add(r.getRun());
+            comp.setIndex(i);
+            Collections.sort(allRuns, comp);
+            c.nextPointFrom(allRuns.get( (int)(allRuns.size()*p)) );
         }
-        RunList finalLst = new RunList();
-        for (CO2Run r: goodR)
+        return c;
+    }
+    public CommonData[] selectManyPercentileRuns(double[] p)
+    {
+        CommonData[] cRuns = new CommonData[p.length];
+        for(int k=0; k<p.length; k++)
+            cRuns[k]=new CommonData();
+        DataComparator comp = new DataComparator();
+        int timeLen = allRuns.get(0).size();
+        for(int i = 0; i<timeLen; i++)
         {
-            finalLst.add(r);
+            Collections.sort(allRuns, comp);
+            System.out.println(allRuns);
+            for(int j=0; j<p.length; j++)
+            {
+                cRuns[j].nextPointFrom(allRuns.get( (int)(allRuns.size()*p[j])) );
+            }
         }
-        return finalLst;
-    }*/
+        return cRuns;
+    }
     public HistData get(int i)
     {
         HistData r = allRuns.get(i);
@@ -70,6 +83,4 @@ public class RunList
     {
         return mean;
     }
-    
-    
 }
