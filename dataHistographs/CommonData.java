@@ -29,11 +29,9 @@ public class CommonData implements HistData
     public float[] getAllCO2()
     {
         float[] returnMe = new float[data.get(0).size()];
-        int c = 0;
-        while ( c<returnMe.length )
+        for(int i=0; i<this.size(); i++)
         {
-            //HistData thisRun = data.get(c);
-            returnMe[c] = this.getCO2(c);//thisRun.getCO2(c);
+            returnMe[i] = this.getCO2(i);
         }
         return returnMe;
     }
