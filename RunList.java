@@ -66,7 +66,8 @@ public class RunList
         for(int i = 0; i<timeLen; i++)
         {
             Collections.sort(allRuns, comp);
-            System.out.println(allRuns);
+            comp.incrementIndex();
+            System.out.println("Sorting "+i);
             for(int j=0; j<p.length; j++)
             {
                 cRuns[j].nextPointFrom(allRuns.get( (int)(allRuns.size()*p[j])) );

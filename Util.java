@@ -51,7 +51,7 @@ public class Util{
                 runInCol = runs.get(col);
                 lineStr+="\t"+(runInCol.getCO2(row));
             }
-            System.out.println(lineStr);
+            /**System.out.println(lineStr);*/
             bigPrintStr+=lineStr+"\n";
         }
         return bigPrintStr;

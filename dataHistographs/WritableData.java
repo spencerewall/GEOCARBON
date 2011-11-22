@@ -15,15 +15,7 @@ public class WritableData implements HistData
     {
         data = new ArrayList<Float>(len);
     }
-    public WritableData(float[] initDat)
-    {
-        data = new ArrayList<Float>(initDat.length);
-        for(int i=0; i<initDat.length; i++)
-        {
-            data.add(initDat[i]);
-        }
-    }
-    public WritableData(float[] initDat)
+    public WritableData(float... initDat)
     {
         data = new ArrayList<Float>(initDat.length);
         for(int i=0; i<initDat.length; i++)

@@ -1,13 +1,10 @@
 *.class
 *.ctxt
 *.hprof
-output.dat
+*.dat
 __SHELL44.java
 package.bluej
 .DS_Store
 meanOut.dat
 package.bluej
 doc/*
-default.dat
-
-altD13C.dat
