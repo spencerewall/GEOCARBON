@@ -30,8 +30,7 @@ public class GEOCARB3
         
         double[] percentiles = {.025,.975, .5};
         
-        GCSVData defaultDat = new GCSVData();
-        RunList defaultRuns = performTests(10000, act, fert, life, gym, glac, defaultDat);
+        RunList defaultRuns = performTests(10000, act, fert, life, gym, glac, new GCSVData());
         System.out.println("Default Runs finished calculating.");
         ArrayList<HistData> aList = new ArrayList();
         aList.add(defaultRuns.getMean());
@@ -40,29 +39,37 @@ public class GEOCARB3
         aList.add(acom[1]);
         aList.add(acom[2]);
         System.out.println("Now writing default runs.");
-        Util.writeRuns("default.dat", aList);
-        //Util.printRuns("defaultTests.dat",aList);
+        Util.writeRuns("worsleyDefault.dat", aList);
         
         System.out.println("Whew, writing all that was sure tough, I think I could use a break");
-        GCSVData prokophData = new GCSVData();
-        prokophData.setDLC0(GCSVData.DLC0_PROKOPH);
-        
-        RunList altC13 = performTests(10000, act, fert, life, gym, glac, prokophData);
-        System.out.println("Alternative d13C tests finished calculating.");
+        GCSVData worsleyData = new GCSVData();
+        worsleyData.setFA0(GCSVData.fA0_WORSLEY);
+        RunList worsley = performTests(10000, act, fert, life, gym, glac, worsleyData);
+        System.out.println("Alternative tests finished calculating.");
         ArrayList<HistData> bList = new ArrayList();
-        
-        bList.add(altC13.getMean());
-        
-        CommonData[] bcom = altC13.selectManyPercentileRuns(percentiles);
+        bList.add(worsley.getMean());
+        CommonData[] bcom = worsley.selectManyPercentileRuns(percentiles);
         bList.add(bcom[0]);
         bList.add(bcom[1]);
         bList.add(bcom[2]);
         System.out.println("Begin write.");
-        Util.writeRuns("altD13C.dat",bList);
+        Util.writeRuns("worsleyAltFA0.dat",bList);
         
-        //RunList m = new RunList();
-        //m.add(m.getMean());
-        //Util.writeRuns("meanOut.dat",tests);
+        
+        
+        System.out.println("Whew, writing all that was sure tough, I think I could use a break");
+        GCSVData worsleyPostData = new GCSVData();
+        worsleyPostData.setFA0(GCSVData.fA0_WORSLEYPOST);
+        RunList worsleyAlt = performTests(10000, act, fert, life, gym, glac, worsleyPostData);
+        System.out.println("Alternative tests finished calculating.");
+        ArrayList<HistData> cList = new ArrayList();
+        cList.add(worsleyAlt.getMean());
+        CommonData[] ccom = worsleyAlt.selectManyPercentileRuns(percentiles);
+        cList.add(ccom[0]);
+        cList.add(ccom[1]);
+        cList.add(ccom[2]);
+        System.out.println("Begin write.");
+        Util.writeRuns("worsleyPostFA0.dat",cList);
     }
     public static RunList performTests(int numTests, double[] ACT, double[] FERT, double[] LIFE, double[] GYM, double[] GLAC, GCSVData arrIn)
     {
