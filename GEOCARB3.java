@@ -28,7 +28,7 @@ public class GEOCARB3
         double[] glac = new double[10000];
         Arrays.fill(glac, 1.0);
         
-        worsleyTest(act, fert, life, gym, glac);
+        prokophRandomizedTest(act, fert, life, gym, glac);
     }
     public static RunList performTests(int numTests, double[] ACT, double[] FERT, double[] LIFE, double[] GYM, double[] GLAC, GCSVData arrIn)
     {
@@ -48,6 +48,61 @@ public class GEOCARB3
             System.out.println("done"+iiit+"\tTime = "+System.currentTimeMillis());
         }
         return tempList;
+    }
+    public static void prokophRandomizedTest(double[] act, double[] fert, double[] life, double[] gym, double[] glac)
+    {
+        double[] percentiles = {.025,.975, .5};
+    
+        RunList def = performTests(10000, act, fert, life, gym, glac, new GCSVData());
+        System.out.println("Default Runs finished calculating.");
+        ArrayList<HistData> aList = new ArrayList();
+        aList.add(def.getMean());
+        CommonData[] acom = def.selectManyPercentileRuns(percentiles);
+        aList.add(acom[0]);
+        aList.add(acom[1]);
+        aList.add(acom[2]);
+        System.out.println("Now writing default runs. 1");
+        Util.writeRuns("defaultCO2.dat", aList);
+        
+        System.out.println("Whew, writing all that was sure tough, I think I could use a break");
+        
+        GCSVData prokophData = new GCSVData(); prokophData.setDLC0(GCSVData.DLC0_PROKOPH);
+        RunList prokoph = performTests(10000, act, fert, life, gym, glac, prokophData);
+        System.out.println("Alternative tests finished calculating.");
+        ArrayList<HistData> bList = new ArrayList();
+        bList.add(prokoph.getMean());
+        CommonData[] bcom = prokoph.selectManyPercentileRuns(percentiles);
+        bList.add(bcom[0]);
+        bList.add(bcom[1]);
+        bList.add(bcom[2]);
+        System.out.println("Begin write. 2");
+        Util.writeRuns("prokophCO2.dat",bList);
+        
+        RunList defRan = performTests(10000, act, fert, life, gym, glac, new GCSVRandomData());
+        System.out.println("Default Runs finished calculating.");
+        ArrayList<HistData> cList = new ArrayList();
+        cList.add(defRan.getMean());
+        CommonData[] ccom = defRan.selectManyPercentileRuns(percentiles);
+        cList.add(ccom[0]);
+        cList.add(ccom[1]);
+        cList.add(ccom[2]);
+        System.out.println("Now writing default runs. 3");
+        Util.writeRuns("defaultRandomCO2.dat", cList);
+        
+        GCSVRandomData grar = new GCSVRandomData(); grar.setDLC0(GCSVRandomData.DLC0_PROKOPH);
+        RunList proRan = performTests(10000, act, fert, life, gym, glac, grar);
+        System.out.println("Default Runs finished calculating.");
+        ArrayList<HistData> dList = new ArrayList();
+        dList.add(proRan.getMean());
+        CommonData[] dcom = proRan.selectManyPercentileRuns(percentiles);
+        dList.add(dcom[0]);
+        dList.add(dcom[1]);
+        dList.add(dcom[2]);
+        System.out.println("Now writing default runs. 4");
+        Util.writeRuns("prokophRandomCO2.dat", dList);
+        
+        System.out.println("Whew, writing all that was sure tough, I think I could use a break");
+        
     }
     public static void prokophTest(double[] act, double[] fert, double[] life, double[] gym, double[] glac)
     {

@@ -265,7 +265,8 @@ public class CO2Calculator
             else
                 fE=1;
             
-            // GEOG is the change in avg land temp due to geography only, obtained via GCM runs
+                // GEOG is the change in avg land temp due to geography only, 
+                // obtained via GCM runs
             GEOG[i-1] = temp[i-1]-12.4;
 
             // fBB is the CO2-assisted acceleration of silicate weathering 

@@ -8,7 +8,9 @@ import java.util.Arrays;
  */
 public class GaussianFactor implements FactorGenerator
 {
-	private double max;
+    private static Random statRan=new Random();
+
+    private double max;
     private double min;
     private double mean;
     private double stDev;
@@ -16,6 +18,14 @@ public class GaussianFactor implements FactorGenerator
     /**
      * Constructs a GaussianFactor Object centered around the given average with a given standardDeviation.
      */
+    public GaussianFactor()
+    {
+        mean = 0;
+        stDev=1;
+        max=Double.POSITIVE_INFINITY;
+        max=Double.NEGATIVE_INFINITY;
+        r = new Random();
+    }
     public GaussianFactor(double average,  double standardDeviation)
     {
         mean = average;
@@ -63,6 +73,7 @@ public class GaussianFactor implements FactorGenerator
         double g = r.nextGaussian();
         return transformNormal(g);
     }
+    
     /**
      * Returns an array of pseudorandom <code>doubles</code> as defined by Random.nextGaussian()
      * 
@@ -124,6 +135,14 @@ public class GaussianFactor implements FactorGenerator
     {
         double g = (n*stDev)+mean;
         return g;
+    }
+    public void setMean(double n)
+    {
+        mean=n;
+    }
+    public void setStandardDeviation(double n)
+    {
+        stDev=n;
     }
     public void setUpperBound(double n)
     {
