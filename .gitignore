@@ -3,8 +3,8 @@
 *.hprof
 *.dat
 __SHELL44.java
-package.bluej
 .DS_Store
 meanOut.dat
 package.bluej
 doc/*
+package.bluej
