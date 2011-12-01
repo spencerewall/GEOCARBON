@@ -84,4 +84,21 @@ public class RunList
     {
         return mean;
     }
+    public ArrayList<ArrayList<HistData>> getErrors(double threshold)
+    {
+        ArrayList<ArrayList<HistData>> errors = new ArrayList<ArrayList<HistData>>(allRuns.get(0).size());
+        HistData med = this.selectPercentileRun(.5);
+        for(int time=0; time<allRuns.get(0).size(); time++)
+        {
+            ArrayList<HistData> timeErr = new ArrayList<HistData>();
+            for (int rNum=0; rNum<allRuns.size(); rNum++)
+            {
+                HistData thisR = allRuns.get(rNum);
+                if (thisR.getCO2(time) > 2*med.getCO2(time))
+                    timeErr.add(thisR);
+            }
+            errors.add(timeErr);
+        }
+        return errors;
+    }
 }
