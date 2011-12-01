@@ -28,7 +28,7 @@ public class GEOCARB3
         double[] glac = new double[10000];
         Arrays.fill(glac, 1.0);
         
-        prokophTest(act, fert, life, gym, glac);
+        worsleyTest(act, fert, life, gym, glac);
     }
     public static RunList performTests(int numTests, double[] ACT, double[] FERT, double[] LIFE, double[] GYM, double[] GLAC, GCSVData arrIn)
     {
@@ -122,5 +122,23 @@ public class GEOCARB3
         cList.add(ccom[2]);
         System.out.println("Begin write.");
         Util.writeRuns("worsleyPostFA0.dat",cList);
+    }
+    public static RunList getDefaultList()
+    {
+        GaussianFactor ACTBell = new GaussianFactor(.03,.13,3);
+        GaussianFactor FERTBell = new GaussianFactor(.2,.8,3);
+        GaussianFactor LIFEBell = new GaussianFactor(.125,.5,3);
+        GaussianFactor GYMBell = new GaussianFactor(.5,1.2,3);
+        
+        double[] act = ACTBell.forceValueList(10000);
+        double[] fert = FERTBell.forceValueList(10000);
+        double[] life = LIFEBell.forceValueList(10000);
+        double[] gym = GYMBell.forceValueList(10000);
+        double[] glac = new double[10000];
+        Arrays.fill(glac, 1.0);
+        
+        RunList defaultRuns = performTests(10000, act, fert, life, gym, glac, new GCSVData());
+        System.out.println("Default Runs finished calculating.");
+        return defaultRuns;
     }
 }
