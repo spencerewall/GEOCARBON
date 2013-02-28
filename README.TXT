@@ -4,12 +4,11 @@ converted in turn from Bob Burner's basic code of the same name.  The
 file name "gcsv" stands for GeoCarbSulfVolc.
 ------------------------------------------------------------------------
 PROJECT TITLE: GEOCARBSULF
-AUTHORS: SPENCER EWALL
+AUTHORS: SPENCER J. EWALL
 
-1. Add ability to change glacial intervals
-2. Volcanic degassing
-3. Worsley1991 compare his past continental area values to berners
-4. GEOCARB3 
+When running it is reccomended that javas heap size be increased.  This can be achieved
+with the command:
+	java -Xmx512m -cp .:Libraries/jsc.jar GCSVDriver
 
 
 

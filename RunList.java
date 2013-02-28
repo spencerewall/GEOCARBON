@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import dataHistographs.*;
+import co2histograph.*;
 
 public class RunList
 {
-    
+    String label;
     ArrayList <HistData> allRuns;
     MeanRun mean;
     
@@ -43,7 +43,30 @@ public class RunList
     {
         return allRuns.size();
     }
-    public CommonData selectPercentileRun(double p)
+    public CommonData runAtIndex(int i)
+    {
+        CommonData c = new CommonData();
+        DataComparator comp = new DataComparator();
+        int timeLen = allRuns.get(0).size();
+        for(int j = 0; j<timeLen; j++)
+        {
+            comp.setIndex(j);
+            Collections.sort(allRuns, comp);
+            comp.incrementIndex();
+            c.nextPointFrom(allRuns.get(i));
+        }
+        return c;
+    }
+    public RunList runsBetweenIndex(int low, int high)
+    {
+        RunList cRuns = new RunList(high-low);
+        for(int i = low; i<high; i++)
+        {
+            cRuns.add(this.runAtIndex(i));
+        }
+        return cRuns;
+    }
+    public CommonData runAtPercentile(double p)
     {
         CommonData c = new CommonData();
         DataComparator comp = new DataComparator();
@@ -52,11 +75,12 @@ public class RunList
         {
             comp.setIndex(i);
             Collections.sort(allRuns, comp);
+            comp.incrementIndex();
             c.nextPointFrom(allRuns.get( (int)(allRuns.size()*p)) );
         }
         return c;
     }
-    public CommonData[] selectManyPercentileRuns(double[] p)
+    public CommonData[] manyRunAtPercentile(double[] p)
     {
         CommonData[] cRuns = new CommonData[p.length];
         for(int k=0; k<p.length; k++)
@@ -67,7 +91,6 @@ public class RunList
         {
             Collections.sort(allRuns, comp);
             comp.incrementIndex();
-            System.out.println("Sorting "+i);
             for(int j=0; j<p.length; j++)
             {
                 cRuns[j].nextPointFrom(allRuns.get( (int)(allRuns.size()*p[j])) );
@@ -84,21 +107,50 @@ public class RunList
     {
         return mean;
     }
-    public ArrayList<ArrayList<HistData>> getErrors(double threshold)
+    public ArrayList<HistData> getErroredRuns(double threshold)
     {
-        ArrayList<ArrayList<HistData>> errors = new ArrayList<ArrayList<HistData>>(allRuns.get(0).size());
-        HistData med = this.selectPercentileRun(.5);
-        for(int time=0; time<allRuns.get(0).size(); time++)
+        ArrayList<HistData> errors = new ArrayList<HistData>(allRuns.size());
+        for(HistData h:allRuns)
         {
-            ArrayList<HistData> timeErr = new ArrayList<HistData>();
-            for (int rNum=0; rNum<allRuns.size(); rNum++)
-            {
-                HistData thisR = allRuns.get(rNum);
-                if (thisR.getCO2(time) > 2*med.getCO2(time))
-                    timeErr.add(thisR);
-            }
-            errors.add(timeErr);
+            h.setErrorThreshold((float)threshold);
+            if(h.countErrors()>0)
+                errors.add(h);
         }
         return errors;
+    }
+    public String getLabel(){
+        return label;
+    }
+    public void setLabel(String label){
+        label = label;
+    }
+    
+    /**
+     * Inner class implements a comparator for the HistData objects which are
+     * held by this RunList
+     */
+    private class DataComparator implements java.util.Comparator<HistData>
+    {
+        int i;
+        public DataComparator()
+        {
+            i=0;
+        }
+        public int compare(HistData o1, HistData o2)
+        {
+            return Float.compare(o1.getCO2(i),o2.getCO2(i));
+        }
+        public int getCurrentIndex()
+        {
+            return i;
+        }
+        public void incrementIndex()
+        {
+            i++;
+        }
+        public void setIndex(int newI)
+        {
+            i=newI;
+        }
     }
 }

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram version="1.0" type="MySQL" versionMajor="5" versionMinor="5" groupSchema="true">
+<Table id="0" name="tblCO2" schema="" database="comp354_sewall" background="16777165">
+<Column id="1" name="co2_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">15</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="2" name="time_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">15</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="3" name="co2" type="float" length="0" nulls="true">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Storage name="Charset" value=""/>
+<Storage name="Collation" value=""/>
+<Storage name="Engine" value=""/>
+</Table>
+<Table id="4" name="tblExperiment" schema="" database="comp354_sewall" background="16777165">
+<Column id="5" name="exp_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="6" name="name" type="varchar" length="25" nulls="true"/>
+<Column id="7" name="description" type="varchar" length="150" nulls="true"/>
+</Table>
+<Table id="8" name="tblExperimentDefaults" schema="" database="comp354_sewall" background="16777165">
+<Column id="9" name="exp_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="10" name="param_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="11" name="scale_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="12" name="max_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="13" name="min_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="14" name="variation_type" type="varchar" length="25" nulls="true"/>
+<Storage name="Charset" value=""/>
+<Storage name="Collation" value=""/>
+<Storage name="Engine" value=""/>
+</Table>
+<Table id="15" name="tblRun" schema="" database="comp354_sewall" background="16777165">
+<Column id="16" name="param_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="17" name="exp_id" type="int" length="0" nulls="true">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Storage name="Charset" value=""/>
+<Storage name="Collation" value=""/>
+<Storage name="Engine" value=""/>
+</Table>
+<Table id="18" name="tblParam" schema="" database="comp354_sewall" background="16777165">
+<Column id="19" name="p_id" type="int" length="0" nulls="false">
+<CP name="DEFAULT_VALUE">0</CP>
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">YES</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="20" name="arr_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">YES</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="21" name="con_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">YES</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="22" name="co2_id" type="int" length="25" nulls="true">
+<CP name="PRECISION">15</CP>
+</Column>
+<Storage name="Charset" value=""/>
+<Storage name="Collation" value=""/>
+<Storage name="Engine" value=""/>
+</Table>
+<Table id="23" name="tblParamArray" schema="" database="comp354_sewall" background="16777165">
+<Column id="24" name="a_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">15</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">YES</CP>
+</Column>
+<Column id="25" name="time_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">YES</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="26" name="fA" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="27" name="fD" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="28" name="fL" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="29" name="dlS" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="30" name="dlC" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Storage name="Charset" value=""/>
+<Storage name="Collation" value=""/>
+<Storage name="Engine" value=""/>
+</Table>
+<Table id="31" name="tblParamConstant" schema="" database="comp354_sewall" background="16777165">
+<Column id="32" name="c_id" type="int" length="0" nulls="false">
+<CP name="PRECISION">11</CP>
+<CP name="IDENTITY">NO</CP>
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="33" name="act" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="34" name="fert" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="35" name="life" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="36" name="gym" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="37" name="glac" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+<Column id="38" name="deltat" type="float" length="0" nulls="false">
+<CP name="UNSIGNED">NO</CP>
+<CP name="ZERO_FILL">NO</CP>
+</Column>
+</Table>
+<Relation id="39" name="fk_expRun" cardinality="-1" identifying="false" nulls="false">
+<FK>5</FK>
+<PK>17</PK>
+<Text/>
+</Relation>
+<Relation id="40" name="fk_expDef" cardinality="1" identifying="false" nulls="false">
+<FK>9</FK>
+<PK>5</PK>
+<Text/>
+</Relation>
+<Relation id="41" name="fk_runParam" cardinality="-2" identifying="false" nulls="false">
+<FK>19</FK>
+<PK>16</PK>
+<Text/>
+</Relation>
+<Relation id="42" name="fk_defParam" cardinality="-2" identifying="false" nulls="false">
+<FK>19</FK>
+<PK>10</PK>
+<Text/>
+</Relation>
+<Relation id="43" name="fk_defScale" cardinality="-2" identifying="false" nulls="false">
+<FK>19</FK>
+<PK>11</PK>
+<Text/>
+</Relation>
+<Relation id="44" name="fk_defMax" cardinality="-2" identifying="false" nulls="false">
+<FK>19</FK>
+<PK>12</PK>
+<Text/>
+</Relation>
+<Relation id="45" name="fk_paramCon" cardinality="-2" identifying="false" nulls="false">
+<FK>32</FK>
+<PK>21</PK>
+<Text/>
+</Relation>
+<Relation id="46" name="fk_paramArr" cardinality="-2" identifying="false" nulls="false">
+<FK>24</FK>
+<PK>20</PK>
+<Text/>
+</Relation>
+<Relation id="47" name="fk_defMin" cardinality="-2" identifying="false" nulls="false">
+<FK>19</FK>
+<PK>13</PK>
+<Text/>
+</Relation>
+<Relation id="48" name="fk_paramCO2" cardinality="-2" identifying="false" nulls="false">
+<FK>1</FK>
+<PK>22</PK>
+<Text/>
+</Relation>
+<Constraint table="4" name="PRIMARY" type="PrimKey">
+<ConstraintColumn id="5"/>
+</Constraint>
+<Constraint table="8" name="PRIMARY" type="PrimKey">
+<ConstraintColumn id="9"/>
+</Constraint>
+<Constraint table="15" name="PRIMARY" type="PrimKey">
+<ConstraintColumn id="16"/>
+</Constraint>
+<Constraint table="18" name="PRIMARY" type="PrimKey">
+<ConstraintColumn id="19"/>
+</Constraint>
+<Constraint table="31" name="PRIMARY" type="PrimKey">
+<ConstraintColumn id="32"/>
+</Constraint>
+<Sheet name="IGS-SERVER2" id="49" disp_at="true" disp_ph="true" disp_rn="true">
+<Place id="42" visible="true" options="210.0,380.0,131.0,91.0,169.830110669374,160.169889330626,160.0,111.0,4,210.0,410.0,70.0,410.0,70.0,200.0,169.0,200.0">654,6,0,0</Place>
+<Place id="43" visible="true" options="210.0,380.0,131.0,91.0,169.830110669374,160.169889330626,160.0,111.0,4,210.0,410.0,90.0,410.0,90.0,220.0,169.0,220.0">650,12,0,0</Place>
+<Place id="46" visible="true" options="410.0,310.0,131.0,51.0,210.0,380.0,131.0,91.0,3,430.0,361.0,430.0,410.0,341.0,410.0">210,-49,0,1</Place>
+<Place id="41" visible="true" options="210.0,380.0,131.0,91.0,400.0,160.0,130.0,61.0,4,250.0,380.0,250.0,290.0,450.0,290.0,450.0,221.0">170,40,0,1</Place>
+<Place id="0" visible="true">380,510,131,80</Place>
+<Place id="39" visible="true" options="240.0,10.0,191.0,80.0,400.0,160.0,130.0,61.0,2,410.0,90.0,410.0,160.0">500,-42,0,0</Place>
+<Place id="40" visible="true" options="169.830110669374,160.169889330626,160.0,111.0,240.0,10.0,191.0,80.0,2,290.0,160.0,290.0,90.0">500,-34,0,0</Place>
+<Place id="47" visible="true" options="210.0,380.0,131.0,91.0,169.830110669374,160.169889330626,160.0,111.0,4,210.0,410.0,130.0,410.0,130.0,260.0,169.0,260.0">643,6,0,-1</Place>
+<Place id="45" visible="true" options="600.0,400.0,130.0,41.0,210.0,380.0,131.0,91.0,4,600.0,420.0,470.0,420.0,470.0,440.0,341.0,440.0">283,-15,0,0</Place>
+<Place id="23" visible="true">410,310,131,51</Place>
+<Place id="18" visible="true">210,380,131,91</Place>
+<Place id="4" visible="true">240,10,191,80</Place>
+<Place id="44" visible="true" options="210.0,380.0,131.0,91.0,169.830110669374,160.169889330626,160.0,111.0,4,210.0,410.0,110.0,410.0,110.0,240.0,169.0,240.0">641,8,0,0</Place>
+<Place id="15" visible="true">400,160,130,61</Place>
+<Place id="31" visible="true">600,400,130,41</Place>
+<Place id="48" visible="true" options="380.0,510.0,131.0,80.0,210.0,380.0,131.0,91.0,3,390.0,510.0,390.0,450.0,341.0,450.0">348,55,0,0</Place>
+<Place id="8" visible="true">169,160,160,111</Place>
+</Sheet>
+<Settings sheet="49" zoom="1.0"/>
+</Diagram>

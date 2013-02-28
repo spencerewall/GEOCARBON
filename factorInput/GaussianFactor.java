@@ -1,129 +1,157 @@
-package factorInput; 
+package factorinput; 
 
-import java.util.Random;
 import java.util.Arrays;
 
 /**
- * This class imitates a bell curve.
+ * The GaussianFactor class simulates a factor whose most probable values are distributed along 
+ * a normal distribution.  The bound toggle is set to on by default.
  */
-public class GaussianFactor implements FactorGenerator
+public class GaussianFactor implements VariedFactor
 {
-    private static Random statRan=new Random();
-
-    private double max;
-    private double min;
+    /* Instance Variables */
     private double mean;
     private double stDev;
-    private Random r;
+    private java.util.Random r;
+    private ValueLimit lim;
+    private final String type="Gaussian";
+    private String var;
+    
+    /*
+     * Constructors and Instantiation Method.
+     */
     /**
-     * Constructs a GaussianFactor Object centered around the given average with a given standardDeviation.
+     * Constructs a new instance of GaussianFactor centered around the given average with a given standardDeviation.
+     * The maximum and minimum of this 
      */
     public GaussianFactor()
     {
-        mean = 0;
-        stDev=1;
-        max=Double.POSITIVE_INFINITY;
-        max=Double.NEGATIVE_INFINITY;
-        r = new Random();
+        this.var="";
+        instantiate(0,1,Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY);
     }
-    public GaussianFactor(double average,  double standardDeviation)
+    public GaussianFactor(double mean,  double stDev, String var)
     {
-        mean = average;
-        stDev = standardDeviation;
-        max=Double.POSITIVE_INFINITY;
-        max=Double.NEGATIVE_INFINITY;
-        r = new Random();
+        this.var=var;
+        instantiate(mean,stDev,Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY);
+    }
+    public GaussianFactor(double mean,  double stDev, double min, double max, String var)
+    {
+        this.var=var;
+        instantiate(mean,stDev,min,max);
     }
     /**
-     * Constructs a new GaussianFactor object defined by two values on the normal distribution which are located
+     * Constructs a new instance of GaussianFacto defined by two values on the normal distribution which are located
      * n standard deviations above/below the mean.  This allows for designation of initial maximum
      * and minimum boundaries for the force and try methods.
      * 
-     * @param lowVal the value located nDevs below the mean
-     * @param highVal the value located nDevs below the mean
-     * @param nDevs the number of standard deviations that high and low are from the mean
+     * @param min the value located nDevs below the mean
+     * @param max the value located nDevs below the mean
+     * @param n the number of standard deviations that high and low are from the mean
      */
-    public GaussianFactor(double lowVal, double highVal, double nDevs)
+    public GaussianFactor(double min, double max, double n, String var)
     {
-    	mean = (lowVal+highVal)/2;
-        stDev = ((highVal-lowVal)/2)/nDevs; //(newRange/initRange) /devNum
-        max = highVal;
-        min = lowVal;
-        r = new Random();
+        this.var=var;
+        instantiate((min+max)/2,((max-min)/2)/n, min, max);
+    }
+    private void instantiate(double mean, double stDev, double min, double max)
+    {
+        this.r = new java.util.Random();
+        this.mean=mean;
+        this.stDev=stDev;
+        lim=new ValueLimit(min, max, true);
+    }
+    public String getType() {
+        return type;
+    }
+    public String getVariableName() {
+        return var;
+    }
+   
+    
+    
+    
+    
+    
+    
+    /*
+     * Following methods defined by parent interface (VariedFactor)
+     */
+    public double getMin() {
+        return lim.getMin();
+    }
+    public double getMax() {
+        return lim.getMax();
+    }
+    public void setMin(double min) {
+        lim.setMin(min);
+    }
+    public void setMax(double max) {
+        lim.setMax(max);
+    }
+    /** Returns a pseudorandom <code>double</code> from this Gaussian distribution. */
+    public double getNext()
+    {
+        double g=transformNormal(r.nextGaussian());
+        while(!lim.passesBoundTest(g))
+            g=transformNormal(r.nextGaussian());
+        return g;
     }
     /**
-     * Returns the mean value of this BellCurve.
+     * Returns an array containing n <code>doubles</code> pseudorandomly distributed doubles along the 
+     * gaussian distribution defined by this GaussianFactor object.
+     * @param n the number of values to generate for the array
+     * @return an array of pseudorandom doubles from this gaussian distribution
      */
-    public double getMean()
+    public double[] getNexts(int n)
+    {
+        double[] g = new double[n];
+        for (int i=0; i<n; i++)
+        {
+            g[i]=this.getNext();
+        }
+        return g;
+    }
+    public void toggleBounds(boolean useBounds)
+    {
+        lim.toggleBounds(useBounds);
+    }
+    /**
+     * Sets the mean value of this gaussian factor
+     */
+    public void setCenter(double center)
+    {
+        this.mean=center;
+    }
+    /**
+     * Returns the mean value of this gaussian factor
+     */
+    public double getCenter()
     {
         return mean;
     }
     /**
-     * Returns the standard deviation of this BellCurve.
+     * Sets the standard deviation of this gaussian factor
      */
-    public double getStandardDeviation()
+    public void setScale(double scale)
+    {
+        this.stDev=scale;
+    }
+    /**
+     * Returns the standard deviation of this gaussian factor
+     */
+    public double getScale()
     {
         return stDev;
     }
-    /**
-     * Returns a pseudorandom <code>double</code> from this Gaussian distribution.
-     */
-    public double getNextValue()
+    public void setValueLimit(ValueLimit lim)
     {
-        double g = r.nextGaussian();
-        return transformNormal(g);
+        this.lim = lim;
+    }
+    public ValueLimit getValueLimit()
+    {
+        return lim;
     }
     
-    /**
-     * Returns an array of pseudorandom <code>doubles</code> as defined by Random.nextGaussian()
-     * 
-     * @param len 
-     * @return an array of pseudorandom doubles from this gaussian distribution
-     */
-    public double[] getValueList(int len)
-    {
-        double[] g = new double[len];
-        for (int i = 0; i< len; i++)
-        {
-            g[i]=getNextValue();
-        }
-        return g;
-    }
-    public double[] tryValueList(int len)
-    {
-        double[] g = new double[len];
-        int index = 0;
-        for (int i = 0; i< len; i++)
-        {
-            double v=getNextValue();
-            if (inRange(v))
-            {
-                g[index]=v;
-                index++;
-            }
-        }
-        return Arrays.copyOfRange(g, 0, index+1);
-    }
-    public double[] forceValueList(int len)
-    {
-        double[] g = new double[len];
-        int i=0;
-        while (i< len)
-        {
-            double v=getNextValue();
-            if (inRange(v))
-            {
-                g[i]=v;
-                i++;
-            }
-        }
-        for (double ga:g)
-        {
-            if (!inRange(ga))
-                System.out.println("BAD!");
-        }
-        return g;
-    }
+    /* Gaussian Factor Specific Methods */
     /**
      * Takes a number from a normal distribution (-1 to 1) and transforms it to a value on
      * the distribution defined by this GaussianFactor object
@@ -133,27 +161,7 @@ public class GaussianFactor implements FactorGenerator
      */
     private double transformNormal(double n)
     {
-        double g = (n*stDev)+mean;
-        return g;
-    }
-    public void setMean(double n)
-    {
-        mean=n;
-    }
-    public void setStandardDeviation(double n)
-    {
-        stDev=n;
-    }
-    public void setUpperBound(double n)
-    {
-        max = n;
-    }
-    public void setLowerBound(double n)
-    {
-        min = n;
-    }
-    public boolean inRange(double n)
-    {
-        return (n>=min)&&(n<=max);
+        n = (n*stDev)+mean;
+        return n;
     }
 }
